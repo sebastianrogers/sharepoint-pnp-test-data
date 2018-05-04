@@ -7,6 +7,9 @@ Generate large quantities of data using the PnP library for SharePoint Online, 2
 
 ## Getting Started
 
+Clone the repository.
+
+
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
@@ -75,7 +78,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Sebastian Rogers** - *Initial work* - [sebastianrogers](https://github.com/sebastianrogers)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
