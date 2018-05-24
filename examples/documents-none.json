@@ -1,0 +1,9 @@
+[{
+    "title": "documents",
+    "description": "Connects but does nothing - use to test connectivity",
+    "rows": "0",
+    "fields": [{
+        "title": "Title",
+        "pattern": "Test Data"
+    }]
+}]

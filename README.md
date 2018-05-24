@@ -18,11 +18,33 @@ You will need the Microsoft [SharePointPnP.PowerShell Commands](https://github.c
 ### Installing
 
 - Navigate to the folder the repository was downloaded to.
-- Test connectivity using the test\documents-none.json file supplied, this uses the default Documents library but does not insert any items.
+- Test connectivity using the [examples/documents-none.json](examples/documents-none.json) file supplied, this uses the default Documents library but does not insert any items.
+
+### Writing JSON files
+
+The json files use an array as their root object so that multiple lists can be updated using a single file.
+
+```json
+[{
+    "title": "The title of the list to add test data to",
+    "description": "A description of why the test data is being added",
+    "rows": "The number of rows to add.",
+    "fields": [{
+        "title": "The title of the field to have data added",
+        "pattern": "The pattern to use to generate the test data"
+    }]
+}]
+```
+
+### Writing Patterns
+
+Patterns are used to generate the data in the fields.
+
+Currently only explicit text is supported.
 
 ## Running the tests
 
-Tests are run by using the example json files in the test folder.
+Tests are run by using the example json files in the [examples](./examples) folder.
 
 ## Contributing
 
