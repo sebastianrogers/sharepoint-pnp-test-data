@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-Installs the Tunbridge data
+Installs explicit list items from a CSV file
 
 .EXAMPLE
-Install to the demo site.
+Install to a demo site.
 
-.\Install-Data.ps1 -URL:https://simpleinnovation.sharepoint.com/sites/TunbridgeKODemo -Path:.\data\demo
+.\Install-Data.ps1 -URL:https://simpleinnovation.sharepoint.com/sites/Demo -Path:.\data\demo
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
@@ -30,8 +30,9 @@ else {
 Write-Host -Object:@"
 In order to update the application data you require the following:
 
-1. An existing Correspondence Management Application Site Collection
-2. An account with both Full Control (Site Owner) permissions and Managed Metadata Administrator permissions.
+1. An existing Site Collection
+2. Any lists that will have items imported into them.
+2. An account with Contributor permissions.
 
 This installation package uses the PnP Provisioning library and is designed to be run from a client workstation.
 
@@ -160,7 +161,7 @@ function Import-Data() {
 
 Connect-PnPOnline -Url:$URL
 
-Write-Host "Started updating Tunbridge data."
+Write-Host "Started importing data at $(Get-Date)."
 
 Write-Host -Object:'Importing the data'
 Get-ChildItem -Path:"$Path\*.csv" |
@@ -173,4 +174,4 @@ Get-ChildItem -Path:"$Path\*.csv" |
     Import-Data -Path:$File.FullName -Url:$URL
 }
 
-Write-Host "Finished updating Correspondence Management App Data at $(Get-Date)."
+Write-Host "Finished importing data at $(Get-Date)."
