@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-Installs explicit list items from a CSV file
+Installs the list items from a csv file
 
 .EXAMPLE
-Install to a demo site.
+Install to the demo site.
 
-.\Install-Data.ps1 -URL:https://simpleinnovation.sharepoint.com/sites/Demo -Path:.\data\demo
+.\set-Data.ps1 -URL:https://<tenant>.sharepoint.com/sites/Demo -Path:.\data\demo
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
@@ -14,7 +14,9 @@ param(
     [Parameter(Mandatory)][string]$URL,
 
     # The folder containing the data to import
-    [Parameter(Mandatory)][string]$Path
+    [Parameter(Mandatory)][string]$Path,
+
+    [Parameter()][string]$File
 )
 
 $ErrorActionPreference = 'stop'
@@ -31,15 +33,66 @@ Write-Host -Object:@"
 In order to update the application data you require the following:
 
 1. An existing Site Collection
-2. Any lists that will have items imported into them.
-2. An account with Contributor permissions.
+2. The list need to exist
+3. An account with contributor permissions.
 
 This installation package uses the PnP Provisioning library and is designed to be run from a client workstation.
 
 If running from a SharePoint server then the Loopback Check must be disabled.
 "@
 
-function Import-Data() {
+
+
+function Convert-SPClientField() {
+
+    <# 
+    .SYNOPSIS 
+      Casts a specified field to its derived type. 
+    .PARAMETER ClientContext 
+      Indicates the client context. 
+      If not specified, uses the default context. 
+    .PARAMETER ClientObject 
+      Indicates the field. 
+    #>
+    
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory = $false)]
+            [Microsoft.SharePoint.Client.ClientContext]
+            $ClientContext = $SPClient.ClientContext,
+            [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+            [Microsoft.SharePoint.Client.Field]
+            $ClientObject
+        )
+    
+        process {
+            if ($ClientContext -eq $null) {
+                throw "Cannot bind argument to parameter 'ClientContext' because it is null."
+            }
+            $Table = @{
+                Text = 'Microsoft.SharePoint.Client.FieldText'
+                Note = 'Microsoft.SharePoint.Client.FieldMultilineText'
+                Choice = 'Microsoft.SharePoint.Client.FieldChoice'
+                MultiChoice = 'Microsoft.SharePoint.Client.FieldMultiChoice'
+                Number = 'Microsoft.SharePoint.Client.FieldNumber'
+                Currency = 'Microsoft.SharePoint.Client.FieldCurrency'
+                DateTime = 'Microsoft.SharePoint.Client.FieldDateTime'
+                Lookup = 'Microsoft.SharePoint.Client.FieldLookup'
+                LookupMulti = 'Microsoft.SharePoint.Client.FieldLookup'
+                Boolean = 'Microsoft.SharePoint.Client.FieldNumber'
+                User = 'Microsoft.SharePoint.Client.FieldUser'
+                UserMulti = 'Microsoft.SharePoint.Client.FieldUser'
+                Url = 'Microsoft.SharePoint.Client.FieldUrl'
+                Calculated = 'Microsoft.SharePoint.Client.FieldCalculated'
+            }
+            $Method = $ClientContext.GetType().GetMethod('CastTo')
+            $Method = $Method.MakeGenericMethod([type[]]$Table[$ClientObject.TypeAsString])
+            return $Method.Invoke($ClientContext, @($ClientObject))
+        }
+    
+    }
+
+function set-Data() {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The path to the CSV file containing the data
@@ -47,18 +100,16 @@ function Import-Data() {
 
         [Parameter(Mandatory)]
         [string]
-        $Url
+        $Url       
     )
 
     [int]$Count = 0
     $Fields = @{}
 
-    Write-Information -MessageData:"Importing data from the $Path file."
-
     @($(Import-Csv -Path:$Path)).ForEach( {
             if ($Count % 100 -eq 0) {
                 Write-Verbose -Message:"Reconnecting to SharePoint"
-                Connect-PnPOnline -Url:$Url
+                Connect-PnPOnline -Url:$Url -UseWebLogin
             }
 
             $Count++
@@ -67,6 +118,7 @@ function Import-Data() {
             $ListName = $null
             $Key = "Title"
             $IDName = [string]::Empty
+            $Context = Get-PnPContext
 
             $Values = @{}
             $PSItem.PSObject.Properties.ForEach( {
@@ -89,36 +141,65 @@ function Import-Data() {
                             $ListName = $Value
                         }
                         default {
-                            if ($Value) {
-                                switch ($Value) {
-                                    "[ID]" {
-                                        $IDName = $Name    
-                                    }
-                                    default {
-                                        $Values[$Name] = $Value 
+                            $Field = $Fields[$Name]
+                            if (-not $Field) {
+                                Write-Verbose -Message:"Getting the $Name field definition for the $ListName list."
+
+                                $Field = Get-PnPField `
+                                    -List:$ListName `
+                                    -Identity:$Name
+                                
+                                $Context.Load($Field)
+                                Execute-PnPQuery    
+                                
+                                $Fields[$Name] = $Field
+                            }
+
+                            switch ($Field.TypeAsString) {
+                                "DateTime"{
+                                    #Date has to be in US format for this to work.
+                                    $Values[$Name] = $Value
+                                }
+                                "Lookup" {
+                                    if ($Value) {
+                                       $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
+                                        #Convert to Microsoft.SharePoint.Client.FieldLookup
+                                        Write-Host $LookupField.LookupList "-" $Value "-" $LookupField.LookupField
+                                       
+                                        $LookupItem = Get-PnPListItem `
+                                            -List:$LookupField.LookupList `
+                                            -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$Value</Value></Eq></Where></Query></View>" `
+        
+                                        $Values[$Name] = $LookupItem.ID
+                                        return;
                                     }
                                 }
-                            }
-                        }
-                    }
+                                "LookupMulti"{
+                                    if ($Value) {
+                                        $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
+                                        $ids = $Value.Split(",") | 
+                                        ForEach-Object {
+                                            return Get-PnPListItem `
+                                            -List:$LookupField.LookupList `
+                                            -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$PSItem</Value></Eq></Where></Query></View>" `
+                                        }.join(",")
 
-                    $Field = $Fields[$Name]
-                    if (-not $Field) {
-                        Write-Verbose -Message:"Getting the $Name field definition for the $ListName list."
-
-                        $Field = Get-PnPField `
-                            -Identity:$Name
-                        $Fields[$Name] = $Field
-                    }
-
-                    switch ($Field.TypeAsString) {
-                        "Lookup" {
-                            if ($Value) {
-                                $LookupItem = Get-PnPListItem `
-                                    -List:$Field.LookupList `
-                                    -Query:"<View><Query><Where><Eq><FieldRef Name='$($Field.LookupField)'/><Value Type='Text'>$Value</Value></Eq></Where></Query></View>" `
-        
-                                $Values[$Name] = $LookupItem.ID
+                                        $Values[$Name] = $ids
+                                        return;
+                                    }
+                                }
+                                default{
+                                    if ($Value) {
+                                        switch ($Value) {
+                                            "[ID]" {
+                                                $IDName = $Name    
+                                            }
+                                            default {
+                                                $Values[$Name] = $Value -replace '{site}', $URL
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -126,9 +207,10 @@ function Import-Data() {
 
             $KeyValue = $Values[$Key]
 
-            # $Values.Keys | ForEach-Object {
-            #     Write-Verbose $Values[$PSItem]
-            # }
+          
+             $Values.Keys | ForEach-Object {
+                 Write-Verbose $Values[$PSItem]
+             }
 
             if ($PSCmdlet.ShouldProcess($ListName, 'Add')) {
                 $ListItem = Get-PnPListItem `
@@ -159,19 +241,29 @@ function Import-Data() {
         })
 }
 
-Connect-PnPOnline -Url:$URL
+Connect-PnPOnline -Url:$URL -UseWebLogin
 
-Write-Host "Started importing data at $(Get-Date)."
+Write-Host "Started updating data."
 
 Write-Host -Object:'Importing the data'
 Get-ChildItem -Path:"$Path\*.csv" |
     Where-Object { $PSItem } |
     ForEach-Object {
-    $File = $PSItem
+    $FolderFile = $PSItem
 
-    Write-Host "Importing data from the $($File.FullName) file."
+    if(![string]::IsNullOrEmpty($File)){
+        if($File -eq $FolderFile.Name){
+             Write-Host "Importing data from the $($FolderFile.FullName) file."
 
-    Import-Data -Path:$File.FullName -Url:$URL
+            set-Data -Path:$FolderFile.FullName -Url:$URL
+        }
+    }
+    else
+    {
+         Write-Host "Importing data from the $($FolderFile.FullName) file."
+
+         set-Data -Path:$FolderFile.FullName -Url:$URL
+    }   
 }
 
-Write-Host "Finished importing data at $(Get-Date)."
+Write-Host "Finished uploading Data at $(Get-Date)."
