@@ -4,6 +4,7 @@ Generate large quantities of data using the PnP library for SharePoint Online, 2
 
 - An easy to install and use PowerShell script with minimal dependencies.
 - A simple JSON based specification file.
+- Utilties to transfer data between SharePoint sites.
 
 ## Getting Started
 
