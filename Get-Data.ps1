@@ -5,7 +5,7 @@ Gets data from a SharePoint list
 .EXAMPLE
 Export the Action Definitions from a demo site.
 
--Url:http://simpleinnovation.sharepoint.com/sites/demo -List:'Action Definitions'
+-Url:http://simpleinnovation.sharepoint.com/sites/demo -List:'Action Definitions' -Fields:'Title', 'ID' -Path:'.\temp\Action Definitions.csv'
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
