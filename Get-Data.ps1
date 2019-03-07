@@ -60,9 +60,7 @@ $ListItems |
                 $Value =  switch ($Item.FieldValues[$Key].GetType().Name)
                 {
                     "DateTime"  {$Item.FieldValues[$Key].ToString("o")}
-                        
                     default {$Item.FieldValuesAsText[$Key]}
-                
                 }
                 $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
             }
