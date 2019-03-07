@@ -48,7 +48,7 @@ $ListItems |
 
         $Context.Load($Item.ContentType)
         $Context.Load($Item.FieldValuesAsText)
-        Execute-PnPQuery
+        Invoke-PnPQuery
 
         $Object = New-Object PSObject
         $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
@@ -57,7 +57,14 @@ $ListItems |
         $Field |
             ForEach-Object {
                 $Key = $PSItem
-                $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Item.FieldValuesAsText[$Key]
+                $Value =  switch ($Item.FieldValues[$Key].GetType().Name)
+                {
+                    "DateTime"  {$Item.FieldValues[$Key].ToString("o")}
+                        
+                    default {$Item.FieldValuesAsText[$Key]}
+                
+                }
+                $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
             }
 
         Export-Csv -Path:$Path -InputObject:$Object -NoTypeInformation -Append:$Append
