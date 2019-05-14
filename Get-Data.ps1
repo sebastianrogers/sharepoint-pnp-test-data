@@ -44,29 +44,33 @@ $Append = $false
 
 $ListItems |
     ForEach-Object {
-        $Item = $PSItem
+    $Item = $PSItem
 
-        $Context.Load($Item.ContentType)
-        $Context.Load($Item.FieldValuesAsText)
-        Invoke-PnPQuery
+    $Context.Load($Item.ContentType)
+    $Context.Load($Item.FieldValuesAsText)
+    Invoke-PnPQuery
 
-        $Object = New-Object PSObject
-        $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
-        $Object | Add-Member -MemberType:NoteProperty -Name:"ContentType" -Value:$Item.ContentType.Name
+    $Object = New-Object PSObject
+    $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
+    $Object | Add-Member -MemberType:NoteProperty -Name:"ContentType" -Value:$Item.ContentType.Name
 
-        $Field |
-            ForEach-Object {
-                $Key = $PSItem
-                $Value =  switch ($Item.FieldValues[$Key].GetType().Name)
-                {
-                    "DateTime"  {$Item.FieldValues[$Key].ToString("o")}
-                    default {$Item.FieldValuesAsText[$Key]}
-                }
-                $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
+    $Field |
+        ForEach-Object {
+        $Key = $PSItem
+        $Value = $null        
+
+        if ($Item.FieldValues[$Key] -ne $null) {
+            $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
+                "DateTime" {$Item.FieldValues[$Key].ToString("o")}
+                default {$Item.FieldValuesAsText[$Key]}
             }
-
-        Export-Csv -Path:$Path -InputObject:$Object -NoTypeInformation -Append:$Append
-
-        $Append = $true
+        }
+        
+        $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
     }
+
+    Export-Csv -Path:$Path -InputObject:$Object -NoTypeInformation -Append:$Append
+
+    $Append = $true
+}
 

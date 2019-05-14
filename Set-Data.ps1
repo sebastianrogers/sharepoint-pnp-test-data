@@ -55,42 +55,42 @@ function Convert-SPClientField() {
       Indicates the field. 
     #>
     
-        [CmdletBinding()]
-        param (
-            [Parameter(Mandatory = $false)]
-            [Microsoft.SharePoint.Client.ClientContext]
-            $ClientContext = $SPClient.ClientContext,
-            [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
-            [Microsoft.SharePoint.Client.Field]
-            $ClientObject
-        )
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $false)]
+        [Microsoft.SharePoint.Client.ClientContext]
+        $ClientContext = $SPClient.ClientContext,
+        [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+        [Microsoft.SharePoint.Client.Field]
+        $ClientObject
+    )
     
-        process {
-            if ($ClientContext -eq $null) {
-                throw "Cannot bind argument to parameter 'ClientContext' because it is null."
-            }
-            $Table = @{
-                Text = 'Microsoft.SharePoint.Client.FieldText'
-                Note = 'Microsoft.SharePoint.Client.FieldMultilineText'
-                Choice = 'Microsoft.SharePoint.Client.FieldChoice'
-                MultiChoice = 'Microsoft.SharePoint.Client.FieldMultiChoice'
-                Number = 'Microsoft.SharePoint.Client.FieldNumber'
-                Currency = 'Microsoft.SharePoint.Client.FieldCurrency'
-                DateTime = 'Microsoft.SharePoint.Client.FieldDateTime'
-                Lookup = 'Microsoft.SharePoint.Client.FieldLookup'
-                LookupMulti = 'Microsoft.SharePoint.Client.FieldLookup'
-                Boolean = 'Microsoft.SharePoint.Client.FieldNumber'
-                User = 'Microsoft.SharePoint.Client.FieldUser'
-                UserMulti = 'Microsoft.SharePoint.Client.FieldUser'
-                Url = 'Microsoft.SharePoint.Client.FieldUrl'
-                Calculated = 'Microsoft.SharePoint.Client.FieldCalculated'
-            }
-            $Method = $ClientContext.GetType().GetMethod('CastTo')
-            $Method = $Method.MakeGenericMethod([type[]]$Table[$ClientObject.TypeAsString])
-            return $Method.Invoke($ClientContext, @($ClientObject))
+    process {
+        if ($ClientContext -eq $null) {
+            throw "Cannot bind argument to parameter 'ClientContext' because it is null."
         }
-    
+        $Table = @{
+            Text        = 'Microsoft.SharePoint.Client.FieldText'
+            Note        = 'Microsoft.SharePoint.Client.FieldMultilineText'
+            Choice      = 'Microsoft.SharePoint.Client.FieldChoice'
+            MultiChoice = 'Microsoft.SharePoint.Client.FieldMultiChoice'
+            Number      = 'Microsoft.SharePoint.Client.FieldNumber'
+            Currency    = 'Microsoft.SharePoint.Client.FieldCurrency'
+            DateTime    = 'Microsoft.SharePoint.Client.FieldDateTime'
+            Lookup      = 'Microsoft.SharePoint.Client.FieldLookup'
+            LookupMulti = 'Microsoft.SharePoint.Client.FieldLookup'
+            Boolean     = 'Microsoft.SharePoint.Client.FieldNumber'
+            User        = 'Microsoft.SharePoint.Client.FieldUser'
+            UserMulti   = 'Microsoft.SharePoint.Client.FieldUser'
+            Url         = 'Microsoft.SharePoint.Client.FieldUrl'
+            Calculated  = 'Microsoft.SharePoint.Client.FieldCalculated'
+        }
+        $Method = $ClientContext.GetType().GetMethod('CastTo')
+        $Method = $Method.MakeGenericMethod([type[]]$Table[$ClientObject.TypeAsString])
+        return $Method.Invoke($ClientContext, @($ClientObject))
     }
+    
+}
 
 function set-Data() {
     [CmdletBinding(SupportsShouldProcess)]
@@ -150,19 +150,22 @@ function set-Data() {
                                     -Identity:$Name
                                 
                                 $Context.Load($Field)
-                                Execute-PnPQuery    
+                                Invoke-PnPQuery    
                                 
                                 $Fields[$Name] = $Field
                             }
 
                             switch ($Field.TypeAsString) {
-                                "DateTime"{
-                                    #Date has to be in US format for this to work.
+                                "DateTime" {
+                                    if ([String]::IsNullOrEmpty($Value)) {
+                                       return
+                                    }
+                                    #Date has to be in US format or ISO for this to work. Cannot be null
                                     $Values[$Name] = $Value
                                 }
                                 "Lookup" {
                                     if ($Value) {
-                                       $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
+                                        $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
                                         #Convert to Microsoft.SharePoint.Client.FieldLookup
                                         Write-Host $LookupField.LookupList "-" $Value "-" $LookupField.LookupField
                                        
@@ -171,24 +174,24 @@ function set-Data() {
                                             -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$Value</Value></Eq></Where></Query></View>" `
         
                                         $Values[$Name] = $LookupItem.ID
-                                        return;
+                                       
                                     }
                                 }
-                                "LookupMulti"{
+                                "LookupMulti" {
                                     if ($Value) {
                                         $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
-                                        $ids = $Value.Split(",") | 
-                                        ForEach-Object {
-                                            return Get-PnPListItem `
-                                            -List:$LookupField.LookupList `
-                                            -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$PSItem</Value></Eq></Where></Query></View>" `
-                                        }.join(",")
+                                        $ids = $Value.Split(";") | 
+                                            ForEach-Object {
+                                            (Get-PnPListItem `
+                                                    -List:$LookupField.LookupList `
+                                                    -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$($_.Trim())</Value></Eq></Where></Query></View>").ID
+                                        }
 
-                                        $Values[$Name] = $ids
-                                        return;
+                                        $Values[$Name] = $ids -join ','
+                                       
                                     }
                                 }
-                                default{
+                                default {
                                     if ($Value) {
                                         switch ($Value) {
                                             "[ID]" {
@@ -208,9 +211,9 @@ function set-Data() {
             $KeyValue = $Values[$Key]
 
           
-             $Values.Keys | ForEach-Object {
-                 Write-Verbose $Values[$PSItem]
-             }
+            $Values.Keys | ForEach-Object {
+                Write-Verbose $Values[$PSItem]
+            }
 
             if ($PSCmdlet.ShouldProcess($ListName, 'Add')) {
                 $ListItem = Get-PnPListItem `
@@ -251,18 +254,17 @@ Get-ChildItem -Path:"$Path\*.csv" |
     ForEach-Object {
     $FolderFile = $PSItem
 
-    if(![string]::IsNullOrEmpty($File)){
-        if($File -eq $FolderFile.Name){
-             Write-Host "Importing data from the $($FolderFile.FullName) file."
+    if (![string]::IsNullOrEmpty($File)) {
+        if ($File -eq $FolderFile.Name) {
+            Write-Host "Importing data from the $($FolderFile.FullName) file."
 
             set-Data -Path:$FolderFile.FullName -Url:$URL
         }
     }
-    else
-    {
-         Write-Host "Importing data from the $($FolderFile.FullName) file."
+    else {
+        Write-Host "Importing data from the $($FolderFile.FullName) file."
 
-         set-Data -Path:$FolderFile.FullName -Url:$URL
+        set-Data -Path:$FolderFile.FullName -Url:$URL
     }   
 }
 
