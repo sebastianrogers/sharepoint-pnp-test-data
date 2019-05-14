@@ -9,7 +9,7 @@ Imports a Maximum of 40 documents per folder.
 There will be a maximum of 20 folder per folder depth
 There will be a maximum of 10 folder depth per root folder of the library
 
-./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExamplFiles -List:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40
+./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExampleFiles -List:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
@@ -84,7 +84,7 @@ function CreateFoldersAndFiles() {
         Write-Verbose -Message "The folder $FolderPath will only go $CurrentDepth Deep"
         $foldersCount = Get-Random -Minimum 1 -Maximum ($MaxFoldersInEachDepth + 1)
         Write-Verbose -Message "The folder $FolderPath will have $foldersCount folders inside"
-        for ($i = 0; $i -le $foldersCount; $i++) {
+        for ($i = 0; $i -lt $foldersCount; $i++) {
             #Create Folder
             $FolderName = Get-RandomFolderName
             $ReturnedFolder = Resolve-PnPFolder -SiteRelativePath $FolderPath\$FolderName
@@ -97,7 +97,7 @@ function CreateFoldersAndFiles() {
     
     $documents = Get-Random -Minimum 1 -Maximum ($MaxDocumentsPerFolder + 1)
     Write-Information -MessageData:"Adding $documents documents to folder path $($FolderPath)"
-    for ($j = 0; $j -le $documents; $j++) {
+    for ($j = 0; $j -lt $documents; $j++) {
         #Add Documents
         $file = Get-RandomFileFromSystem
         $fileName = Get-RandomFileName
@@ -122,4 +122,4 @@ Write-Information -MessageData:"Completed adding files to: $ListName"
 Write-Information -MessageData:"Number of New Folder: $global:FolderCount"
 Write-Information -MessageData:"Number of New Files: $global:ItemCount"
 $total = $global:FolderCount + $global:ItemCount
-Write-Information -MessageData:"Total Number of Items: $global:ItemCount"
+Write-Information -MessageData:"Total Number of Items: $total"
