@@ -5,17 +5,15 @@ Installs the list items from a csv file
 .EXAMPLE
 Install to the demo site.
 
-.\set-Data.ps1 -URL:https://<tenant>.sharepoint.com/sites/Demo -Path:.\data\demo
+.\Set-Data.ps1 -URL:https://<tenant>.sharepoint.com/sites/Demo -Path:.\examples\example.csv
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    # The URL of the site collection to install the Correspondence Mangement App into
-    [Parameter(Mandatory)][string]$URL,
-
-    # The folder containing the data to import
+    # The path expression containing the data files import
     [Parameter(Mandatory)][string]$Path,
 
+    # TODO: REmove and replace with path
     [Parameter()][string]$File
 )
 
@@ -40,8 +38,6 @@ This installation package uses the PnP Provisioning library and is designed to b
 
 If running from a SharePoint server then the Loopback Check must be disabled.
 "@
-
-
 
 function Convert-SPClientField() {
 
@@ -92,17 +88,14 @@ function Convert-SPClientField() {
     
 }
 
-function set-Data() {
+function Set-Data() {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The path to the CSV file containing the data
-        [Parameter(Mandatory)][string]$Path,
-
-        [Parameter(Mandatory)]
-        [string]
-        $Url       
+        [Parameter(Mandatory)][string]$Path
     )
 
+    $Url = (Get-PnPWeb).Url
     [int]$Count = 0
     $Fields = @{}
 
@@ -160,8 +153,9 @@ function set-Data() {
                                     if ([String]::IsNullOrEmpty($Value)) {
                                        return
                                     }
-                                    #Date has to be in US format or ISO for this to work. Cannot be null
-                                    $Values[$Name] = $Value
+
+                                    # Date has to be in US format or ISO for this to work. Cannot be null
+                                    $Values[$Name] = Get-Date -Date:$Value -Format:O
                                 }
                                 "Lookup" {
                                     if ($Value) {
@@ -244,28 +238,16 @@ function set-Data() {
         })
 }
 
-Connect-PnPOnline -Url:$URL -UseWebLogin
-
 Write-Host "Started updating data."
 
 Write-Host -Object:'Importing the data'
-Get-ChildItem -Path:"$Path\*.csv" |
+Get-ChildItem -Path:$Path |
     Where-Object { $PSItem } |
     ForEach-Object {
     $FolderFile = $PSItem
 
-    if (![string]::IsNullOrEmpty($File)) {
-        if ($File -eq $FolderFile.Name) {
-            Write-Host "Importing data from the $($FolderFile.FullName) file."
-
-            set-Data -Path:$FolderFile.FullName -Url:$URL
-        }
-    }
-    else {
-        Write-Host "Importing data from the $($FolderFile.FullName) file."
-
-        set-Data -Path:$FolderFile.FullName -Url:$URL
-    }   
+    Write-Host "Importing data from the $($FolderFile.FullName) file."
+    Set-Data -Path:$FolderFile.FullName
 }
 
 Write-Host "Finished uploading Data at $(Get-Date)."

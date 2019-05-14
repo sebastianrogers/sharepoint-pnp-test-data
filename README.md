@@ -45,7 +45,14 @@ Currently only explicit text is supported.
 
 ## Running the tests
 
-Tests are run by using the example json files in the [examples](./examples) folder.
+Tests are run by using the example csv files in the [examples](./examples) folder.
+
+They require a SharePoint Site with an Example list.
+
+```ps
+Connect-PnPOnline -Url:https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\set-Data.ps1 -Path:.\examples\example.csv -Verbose
+```
 
 ## Contributing
 
