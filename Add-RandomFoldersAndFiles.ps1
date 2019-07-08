@@ -22,11 +22,11 @@ param(
     [Parameter(Mandatory)]
     [string]
     $ListName,
-    #Maximum Folder Depth Number
+    #Maximum Folder Depth Number (D)
     [Parameter(Mandatory)]
     [int]
     $MaxFolderDepth,
-    #Maximum No. of Folders in each Folder Depth
+    #Maximum No. of Folders in each Folder Depth  (W) = (W + ... + W^D)
     [Parameter(Mandatory)]
     [int]
     $MaxFoldersInEachDepth,
@@ -80,10 +80,15 @@ function CreateFoldersAndFiles() {
 
     $CurrentDepth--
     if ($CurrentDepth -gt 0) {
-        $CurrentDepth = Get-Random -Minimum 0 -Maximum ($CurrentDepth + 1)
-        Write-Verbose -Message "The folder $FolderPath will only go $CurrentDepth Deep"
-        $foldersCount = Get-Random -Minimum 1 -Maximum ($MaxFoldersInEachDepth + 1)
-        Write-Verbose -Message "The folder $FolderPath will have $foldersCount folders inside"
+        if ($false) {
+            $CurrentDepth = Get-Random -Minimum 0 -Maximum ($CurrentDepth + 1)
+            Write-Verbose -Message "The folder $FolderPath will only go $CurrentDepth Deep"
+            $foldersCount = Get-Random -Minimum 1 -Maximum ($MaxFoldersInEachDepth + 1)
+            Write-Verbose -Message "The folder $FolderPath will have $foldersCount folders inside"
+        }
+
+        $foldersCount = $MaxFoldersInEachDepth
+
         for ($i = 0; $i -lt $foldersCount; $i++) {
             #Create Folder
             $FolderName = Get-RandomFolderName
@@ -95,7 +100,7 @@ function CreateFoldersAndFiles() {
     }
 
     
-    $documents = Get-Random -Minimum 1 -Maximum ($MaxDocumentsPerFolder + 1)
+    $documents = $MaxDocumentsPerFolder
     Write-Information -MessageData:"Adding $documents documents to folder path $($FolderPath)"
     for ($j = 0; $j -lt $documents; $j++) {
         #Add Documents
