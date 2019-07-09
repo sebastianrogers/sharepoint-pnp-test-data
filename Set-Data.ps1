@@ -1,20 +1,18 @@
 <#
 .SYNOPSIS
 Installs the list items from a csv file
+Connect to the Site First.
 
 .EXAMPLE
 Install to the demo site.
 
-.\Set-Data.ps1 -URL:https://<tenant>.sharepoint.com/sites/Demo -Path:.\examples\example.csv
+.\Set-Data.ps1 -Path:.\examples\example.csv
 
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
     # The path expression containing the data files import
-    [Parameter(Mandatory)][string]$Path,
-
-    # TODO: REmove and replace with path
-    [Parameter()][string]$File
+    [Parameter(Mandatory)][string]$Path
 )
 
 $ErrorActionPreference = 'stop'
@@ -97,7 +95,7 @@ function Set-Data() {
 
     $Url = (Get-PnPWeb).Url
     [int]$Count = 0
-    $Fields = @{}
+    $Fields = @{ }
 
     @($(Import-Csv -Path:$Path)).ForEach( {
             if ($Count % 100 -eq 0) {
@@ -109,11 +107,11 @@ function Set-Data() {
         
             $ContentType = $null
             $ListName = $null
-            $Key = "Title"
+            $Key = $null
             $IDName = [string]::Empty
             $Context = Get-PnPContext
 
-            $Values = @{}
+            $Values = @{ }
             $PSItem.PSObject.Properties.ForEach( {
 
                     $Name = $PSItem.Name
@@ -151,7 +149,7 @@ function Set-Data() {
                             switch ($Field.TypeAsString) {
                                 "DateTime" {
                                     if ([String]::IsNullOrEmpty($Value)) {
-                                       return
+                                        return
                                     }
 
                                     # Date has to be in US format or ISO for this to work. Cannot be null
@@ -175,7 +173,7 @@ function Set-Data() {
                                     if ($Value) {
                                         $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
                                         $ids = $Value.Split(";") | 
-                                            ForEach-Object {
+                                        ForEach-Object {
                                             (Get-PnPListItem `
                                                     -List:$LookupField.LookupList `
                                                     -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$($_.Trim())</Value></Eq></Where></Query></View>").ID
@@ -202,20 +200,23 @@ function Set-Data() {
                     }
                 })
 
-            $KeyValue = $Values[$Key]
+            $KeyValue = if ($Key) { $Values[$Key] } else { $null }
 
-          
             $Values.Keys | ForEach-Object {
                 Write-Verbose $Values[$PSItem]
             }
 
             if ($PSCmdlet.ShouldProcess($ListName, 'Add')) {
-                $ListItem = Get-PnPListItem `
-                    -List:$ListName `
-                    -Query:"<View><Query><Where><Eq><FieldRef Name='$Key'/><Value Type='Text'>$KeyValue</Value></Eq></Where></Query></View>"
-
+                $ListItem = $null
+               
+                if ($KeyValue) {
+                    $ListItem = Get-PnPListItem `
+                        -List:$ListName `
+                        -Query:"<View><Query><Where><Eq><FieldRef Name='$Key'/><Value Type='Text'>$KeyValue</Value></Eq></Where></Query></View>"
+                }
+               
                 if ($ListItem) {
-                    Write-Verbose "Updating the $KeyValue item to the $ListName list."
+                    Write-Information "Updating the $KeyValue item to the $ListName list."
                     Set-PnPListItem -List:$ListName -Identity:$ListItem -ContentType:$ContentType -Values:$Values | Out-Null
                 }
                 else {
@@ -225,7 +226,7 @@ function Set-Data() {
 
                 if ($IDName) {
                     $IDValue = $ListItem.ID
-                    Write-Verbose "Updating the $IDName column with $IDValue the list item's ID."
+                    Write-Information "Updating the $IDName column with $IDValue the list item's ID."
                     Set-PnPListItem `
                         -List:$ListName `
                         -Identity:$ListItem `
@@ -242,8 +243,8 @@ Write-Host "Started updating data."
 
 Write-Host -Object:'Importing the data'
 Get-ChildItem -Path:$Path |
-    Where-Object { $PSItem } |
-    ForEach-Object {
+Where-Object { $PSItem } |
+ForEach-Object {
     $FolderFile = $PSItem
 
     Write-Host "Importing data from the $($FolderFile.FullName) file."

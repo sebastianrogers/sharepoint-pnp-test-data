@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
 Gets data from a SharePoint list
+Connect to the SharePoint Site first.
 
 .EXAMPLE
 Export the Action Definitions from a demo site.
@@ -33,8 +34,6 @@ else {
     Set-PnPTraceLog -Off
 }
 
-Connect-PnPOnline -Url:$URL -UseWebLogin
-
 $Context = Get-PnPContext
 
 $ListItems = Get-PnPListItem `
@@ -61,7 +60,14 @@ $ListItems |
 
         if ($Item.FieldValues[$Key] -ne $null) {
             $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
-                "DateTime" {$Item.FieldValues[$Key].ToString("o")}
+                "DateTime" {
+                    $Item.FieldValues[$Key].ToString("o")
+                    break
+                }
+                "Boolean" {
+                    if($Item.FieldValuesAsText[$Key] -eq "Yes"){$true} else {$false}
+                    break
+                }
                 default {$Item.FieldValuesAsText[$Key]}
             }
         }
