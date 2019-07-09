@@ -9,7 +9,7 @@ Imports a Maximum of 40 documents per folder.
 There will be a maximum of 20 folder per folder depth
 There will be a maximum of 10 folder depth per root folder of the library
 
-./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExampleFiles -List:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40
+./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExampleFiles -ListName:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40
 
 #>
 [CmdletBinding(SupportsShouldProcess)]

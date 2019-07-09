@@ -17,7 +17,7 @@ param(
     [Parameter(Mandatory)][string]$List,
 
     # The fields in the list to get the data from
-    [Parameter(Mandatory)][array]$Field,
+    [Parameter(Mandatory)][array]$Fields,
 
     # The CSV file to write the data to
     [Parameter(Mandatory)][string]$Path
@@ -54,7 +54,7 @@ $ListItems |
     $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
     $Object | Add-Member -MemberType:NoteProperty -Name:"ContentType" -Value:$Item.ContentType.Name
 
-    $Field |
+    $Fields |
         ForEach-Object {
         $Key = $PSItem
         $Value = $null        
