@@ -1,72 +1,106 @@
 {
     "title": "people",
     "description": "Generates sets of people data",
-    "lists": {
-        "rows": "10",
-        "fields": [
-            {
-                "title": "ListName",
-                "pattern": "Economy Nominations"
-            },
-            {
-                "title": "ContentType",
-                "pattern": "Nomination"
-            },
-            {
-                "title": "Key",
-                "pattern": "Title"
-            },
-            {
-                "title": "Forenames",
-                "pattern": "{lookup:forename}"
-            },
-            {
-                "title": "Surname",
-                "pattern": "{lookup:surname}"
-            },
-            {
-                "title": "Title",
-                "pattern": "{field:Forenames} {field:Surname}"
-            },
-            {
-                "title": "PostNoms",
-                "pattern": "{lookup:postnoms}"
-            },
-            {
-                "title": "NomineesGender",
-                "pattern": "{lookup:gender}"
-            },
-            {
-                "title": "Award",
-                "pattern": "{lookup:award}"
-            },
-            {
-                "title": "AwardRound",
-                "pattern": "{lookup:awardround}"
-            },
-            {
-                "title": "Public",
-                "pattern": "{lookup:boolean}"
-            },
-            {
-                "title": "Voluntary",
-                "pattern": "{lookup:boolean}"
-            },
-            {
-                "title": "NomineesOrigin",
-                "pattern": "{lookup:nomineesorigin}"
-            },
-            {
-                "title": "HonoursCoordinator",
-                "pattern": "{lookup:honourscoordinator}"
-            },
-            {
-                "title": "Telephone",
-                "pattern": "{telephone}"
-            }
-        ]
-    },
+    "lists": [
+        {
+            "rows": "300",
+            "fields": [
+                {
+                    "title": "ListName",
+                    "pattern": "{lookup:listname}"
+                },
+                {
+                    "title": "ContentType",
+                    "pattern": "Nomination"
+                },
+                {
+                    "title": "Key",
+                    "pattern": "Title"
+                },
+                {
+                    "title": "Forenames",
+                    "pattern": "{lookup:forename}"
+                },
+                {
+                    "title": "Surname",
+                    "pattern": "{lookup:surname}"
+                },
+                {
+                    "title": "Title",
+                    "pattern": "{field:Forenames} {field:Surname}"
+                },
+                {
+                    "title": "PostNoms",
+                    "pattern": "{lookup:postnoms}"
+                },
+                {
+                    "title": "NomineesGender",
+                    "pattern": "{lookup:gender}"
+                },
+                {
+                    "title": "Award",
+                    "pattern": "{lookup:award}"
+                },
+                {
+                    "title": "AwardRound",
+                    "pattern": "{lookup:awardround}"
+                },
+                {
+                    "title": "Public",
+                    "pattern": "{lookup:boolean}"
+                },
+                {
+                    "title": "Voluntary",
+                    "pattern": "{lookup:boolean}"
+                },
+                {
+                    "title": "NomineesOrigin",
+                    "pattern": "{lookup:nomineesorigin}"
+                },
+                {
+                    "title": "HonoursCoordinator",
+                    "pattern": "{lookup:user}"
+                },
+                {
+                    "title": "HonoursTeamOwner",
+                    "pattern": "{lookup:user}"
+                },
+                {
+                    "title": "InCurrentPost",
+                    "pattern": "{lookup:boolean}"
+                },
+                {
+                    "title": "Nominator",
+                    "pattern": "{lookup:user}"
+                },
+                {
+                    "title": "Telephone",
+                    "pattern": "{telephone}"
+                },
+                {
+                    "title": "DateOfBirth",
+                    "pattern": "{date}"
+                },
+                {
+                    "title": "AgeNotConfirmed",
+                    "pattern": "{lookup:boolean}"
+                },
+                {
+                    "title": "BEISGroup",
+                    "pattern": "{lookup:beisgroup}"
+                }
+            ]
+        }
+    ],
     "lookups": {
+        "listname": {
+            "file": "",
+            "values": [
+                "Economy Nominations",
+                "State Nominations",
+                "STR Nominations"
+            ]
+        },
         "award": {
             "file": "",
             "values": [
@@ -90,9 +124,24 @@
                 "NY19"
             ]
         },
+        "beisgroup": {
+            "file": "",
+            "values": [
+                "Corporate Service",
+                "Business Sectors",
+                "Industrial Strategy, Science & Innovation",
+                "Energy Transformation & Clean Growth",
+                "Energy & Security",
+                "EU Exit and Analysis",
+                "Market Frameworks"
+            ]
+        },
         "boolean": {
             "file": "",
-            "values": ["0","1"]
+            "values": [
+                "0",
+                "1"
+            ]
         },
         "forename": {
             "file": "examples\\first-names.txt",
@@ -104,13 +153,6 @@
                 "Male",
                 "Female",
                 "Prefer not to say"
-            ]
-        },
-        "honourscoordinator": {
-            "file": "",
-            "values": [
-                "sebastian.rogers@beis.onmicrosoft.com",
-                "tina.oliver@beis.onmicrosoft.com"
             ]
         },
         "nomineesorigin": {
@@ -176,6 +218,13 @@
                 "Scotland",
                 "Other",
                 "Unknown"
+            ]
+        },
+        "user": {
+            "file": "",
+            "values": [
+                "sebastian.rogers@beis.onmicrosoft.com",
+                "tina.oliver@beis.onmicrosoft.com"
             ]
         }
     }

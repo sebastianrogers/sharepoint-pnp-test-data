@@ -24,6 +24,13 @@ $ErrorActionPreference = 'stop'
 # Show basic information
 $InformationPreference = 'continue'
 
+function Get-RandomDate() {
+    $Minimum = $(Get-Date "1900-01-01").Ticks
+    $Maximum = $(Get-Date "2000-12-31").Ticks
+    $Ticks = Get-Random -Maximum:$Maximum -Minimum:$Minimum
+    return Get-Date $Ticks -format "o"
+}
+
 $Append = $false
 
 $Definition = Get-Content -Path:$DefinitionPath -Raw |
@@ -74,6 +81,8 @@ $Definition.lists |
             $Value = $Field.Pattern
 
             $Value = $Value -replace "{telephone}", $("{0:d5} {1:d6}" -f $(Get-Random -Maximum:9999 -Minimum:0), $(Get-Random -Maximum:999999 -Minimum:0))
+
+            $Value = $Value -replace "{date}", $(Get-RandomDate)
 
             $Lookups.Keys | ForEach-Object {
                 $Key = $PSItem
