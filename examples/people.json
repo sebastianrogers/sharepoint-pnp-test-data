@@ -2,7 +2,7 @@
     "title": "people",
     "description": "Generates sets of people data",
     "lists": {
-        "rows": "1",
+        "rows": "2",
         "fields": [
             {
                 "title": "ListName",
@@ -18,16 +18,28 @@
             },
             {
                 "title": "Forenames",
-                "pattern": "John"
+                "pattern": "{lookup:forename}"
             },
             {
                 "title": "Surname",
-                "pattern": "Brown"
+                "pattern": "{lookup:surname}"
             },
             {
                 "title": "Title",
                 "pattern": "Test Data"
             }
+        ]
+    },
+    "lookups": {
+        "forename": [
+            "Paul",
+            "Sebastian",
+            "Simon"
+        ],
+        "surname": [
+            "Matthews",
+            "Rogers",
+            "White"
         ]
     }
 }

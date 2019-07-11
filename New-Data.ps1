@@ -36,18 +36,38 @@ $Definition.lists |
     $Rows = $List.rows
     $Fields = $List.fields
 
-    for ($i = 0; $i -lt $Rows; $i++) {
+    1..$Rows | ForEach-Object {
+        $Row = $PSItem
+
         $Object = New-Object PSObject
+
+        $Lookups = @{}
+
+        $Definition.lookups.PSObject.Properties |
+            ForEach-Object {
+                $Key = $PSItem.Name
+                $Lookup = $Definition.lookups.$Key
+
+                $Lookups.$Key = $Lookup[$(Get-Random -Minimum:0 -Maximum:$Lookup.length)]
+            }
 
         $Fields | ForEach-Object {
             $Field = $PSItem
-            $Object | Add-Member -MemberType:NoteProperty -Name:$Field.title -Value:$Field.pattern
+            $Value = $Field.Pattern
+
+            $Lookups.Keys | ForEach-Object {
+                $Key = $PSItem
+                $Lookup = $Lookups.$Key
+                $Value = $Value -replace "{lookup:$Key}", $Lookup
+            }
+
+            $Object | Add-Member -MemberType:NoteProperty -Name:$Field.title -Value:$Value
         }
-    }
 
-    if ($Object) {
-        Export-Csv -Path:$OutputPath -InputObject:$Object -NoTypeInformation -Append:$Append
-
-        $Append = $true
+        if ($Object) {
+            Export-Csv -Path:$OutputPath -InputObject:$Object -NoTypeInformation -Append:$Append
+    
+            $Append = $true
+        }
     }
 }

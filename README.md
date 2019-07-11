@@ -20,18 +20,35 @@ This uses a json definition file that will be processed by the New-Data.ps1 scri
     "title": "Human readable title for the definition.",
     "description": "Description of what the definition will generate.",
     "lists": [
-    {
-        "rows": "1", // The number of rows to generate
-        "fields": [  
-            {
-                "title": "The InternalName of the field",
-                "pattern": "The pattern to use to generate the field"
-            }
-        ]
-    }
+        {
+            "rows": "1", // The number of rows to generate
+            "fields": [  
+                {
+                    "title": "The InternalName of the field",
+                    "pattern": "The pattern to use to generate the field"
+                }
+            ]
+        }
+    ],
+    "lookups":
+        "token": [  // The token name that the {lookup:} token will use
+            "value"
     ]
 }
 ```
+
+#### Field Patterns
+
+The field pattern is the data used to populate a field.
+
+It can comprise:
+
+- Tokens
+- Regular expressions
+
+The tokens are evaulated first.
+
+- {lookup:<lookup name>}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename}"
 
 ## Getting Started
 
