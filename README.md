@@ -16,7 +16,7 @@ Randomly generate data that can be imported via Set-Data.ps1.
 This uses a json definition file that will be processed by the New-Data.ps1 script to generate a CSV file suitable for uploading via Set-Data.ps1.
 
 ```json
-{}
+{
     "title": "Human readable title for the definition.",
     "description": "Description of what the definition will generate.",
     "lists": [
@@ -30,10 +30,11 @@ This uses a json definition file that will be processed by the New-Data.ps1 scri
             ]
         }
     ],
-    "lookups":
-        "token": [  // The token name that the {lookup:} token will use
-            "value"
-    ]
+    "lookups": {
+            "token": [  // The token name that the {lookup:} token will use
+                "value"
+        ]
+    }
 }
 ```
 
@@ -48,6 +49,7 @@ It can comprise:
 
 The tokens are evaulated first in the following order.
 
+- {telephone}, generates a string in the format "09999 999999"
 - {lookup:name}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename}"
 - {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 

@@ -2,7 +2,7 @@
     "title": "people",
     "description": "Generates sets of people data",
     "lists": {
-        "rows": "2",
+        "rows": "10",
         "fields": [
             {
                 "title": "ListName",
@@ -14,7 +14,7 @@
             },
             {
                 "title": "Key",
-                "pattern": "Nomination"
+                "pattern": "Title"
             },
             {
                 "title": "Forenames",
@@ -29,12 +29,40 @@
                 "pattern": "{field:Forenames} {field:Surname}"
             },
             {
+                "title": "PostNoms",
+                "pattern": "{lookup:postnoms}"
+            },
+            {
                 "title": "NomineesGender",
                 "pattern": "{lookup:gender}"
             },
             {
                 "title": "Award",
                 "pattern": "{lookup:award}"
+            },
+            {
+                "title": "AwardRound",
+                "pattern": "{lookup:awardround}"
+            },
+            {
+                "title": "Public",
+                "pattern": "{lookup:boolean}"
+            },
+            {
+                "title": "Voluntary",
+                "pattern": "{lookup:boolean}"
+            },
+            {
+                "title": "NomineesOrigin",
+                "pattern": "{lookup:nomineesorigin}"
+            },
+            {
+                "title": "HonoursCoordinator",
+                "pattern": "{lookup:honourscoordinator}"
+            },
+            {
+                "title": "Telephone",
+                "pattern": "{telephone}"
             }
         ]
     },
@@ -51,6 +79,25 @@
                 "CH"
             ]
         },
+        "awardround": {
+            "file": "",
+            "values": [
+                "BD17",
+                "NY17",
+                "BD18",
+                "NY18",
+                "BD19",
+                "NY19"
+            ]
+        },
+        "boolean": {
+            "file": "",
+            "values": ["0","1"]
+        },
+        "forename": {
+            "file": "examples\\first-names.txt",
+            "values": []
+        },
         "gender": {
             "file": "",
             "values": [
@@ -59,13 +106,77 @@
                 "Prefer not to say"
             ]
         },
-        "forename": {
-            "file": "examples\\first-names.txt",
-            "values": []
+        "honourscoordinator": {
+            "file": "",
+            "values": [
+                "sebastian.rogers@beis.onmicrosoft.com",
+                "tina.oliver@beis.onmicrosoft.com"
+            ]
+        },
+        "nomineesorigin": {
+            "file": "",
+            "values": [
+                "Not Known TBC",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "Non BAME",
+                "BAME Asian - Other",
+                "BAME Asian - Chinese",
+                "BAME Asian - Bangladeshi",
+                "BAME Asian - Indian",
+                "BAME Asian - Pakistani",
+                "BAME Black - Other",
+                "BAME Black - African",
+                "BAME Black - Caribbean",
+                "BAME Black African and White",
+                "BAME Black Caribbean and White",
+                "BAME Other",
+                "BAME Origin TBC"
+            ]
+        },
+        "postnoms": {
+            "file": "",
+            "values": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "OBE"
+            ]
         },
         "surname": {
             "file": "examples\\names.txt",
             "values": []
+        },
+        "ukregion": {
+            "file": "",
+            "values": [
+                "London",
+                "South East",
+                "Yorkshire &amp; Humber",
+                "North East",
+                "North West",
+                "East Midlands",
+                "West Midlands",
+                "East",
+                "South West",
+                "Wales",
+                "Northern Ireland",
+                "Scotland",
+                "Other",
+                "Unknown"
+            ]
         }
     }
 }

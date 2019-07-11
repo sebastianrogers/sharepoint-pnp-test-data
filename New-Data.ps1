@@ -73,6 +73,8 @@ $Definition.lists |
             $Field = $PSItem
             $Value = $Field.Pattern
 
+            $Value = $Value -replace "{telephone}", $("{0:d5} {1:d6}" -f $(Get-Random -Maximum:9999 -Minimum:0), $(Get-Random -Maximum:999999 -Minimum:0))
+
             $Lookups.Keys | ForEach-Object {
                 $Key = $PSItem
                 $Lookup = $Lookups.$Key
