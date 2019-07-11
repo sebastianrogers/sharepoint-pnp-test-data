@@ -27,10 +27,32 @@
             {
                 "title": "Title",
                 "pattern": "{field:Forenames} {field:Surname}"
+            },
+            {
+                "title": "NomineesGender",
+                "pattern": "{lookup:gender}"
+            },
+            {
+                "title": "Award",
+                "pattern": "{lookup:award}"
             }
         ]
     },
     "lookups": {
+        "award": [
+            "Kt/DBE",
+            "CBE",
+            "OBE",
+            "MBE",
+            "BEM",
+            "GBE",
+            "CH"
+        ],
+        "gender": [
+            "Male",
+            "Female",
+            "Prefer not to say"
+        ],
         "forename": [
 			"Aaren",
 			"Aarika",
