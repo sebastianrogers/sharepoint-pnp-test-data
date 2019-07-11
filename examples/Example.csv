@@ -1,4 +1,4 @@
-"ListName","ContentType","Title","CustomDate"
-"Example","Item","UK Date","13/01/2019"
-"Example","Item","Ambiguous Date","01/02/2019"
-"Example","Item","ISO Date","2019-01-02T09:00:00.000000"
+"ListName","ContentType","Key","Title","CustomDate"
+"Example","Item","Title","UK Date","13/01/2019"
+"Example","Item","Title",,"Ambiguous Date","01/02/2019"
+"Example","Item","Title","ISO Date","2019-01-02T09:00:00.000000"

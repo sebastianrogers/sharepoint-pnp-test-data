@@ -42,7 +42,7 @@ $ListItems = Get-PnPListItem `
 $Append = $false
 
 $ListItems |
-    ForEach-Object {
+ForEach-Object {
     $Item = $PSItem
 
     $Context.Load($Item.ContentType)
@@ -54,7 +54,7 @@ $ListItems |
     $Object | Add-Member -MemberType:NoteProperty -Name:"ContentType" -Value:$Item.ContentType.Name
 
     $Fields |
-        ForEach-Object {
+    ForEach-Object {
         $Key = $PSItem
         $Value = $null        
 
@@ -65,10 +65,10 @@ $ListItems |
                     break
                 }
                 "Boolean" {
-                    if($Item.FieldValuesAsText[$Key] -eq "Yes"){$true} else {$false}
+                    if ($Item.FieldValuesAsText[$Key] -eq "Yes") { $true } else { $false }
                     break
                 }
-                default {$Item.FieldValuesAsText[$Key]}
+                default { $Item.FieldValuesAsText[$Key] }
             }
         }
         

@@ -5,6 +5,33 @@ Generate large quantities of data using the PnP library for SharePoint Online, 2
 - An easy to install and use PowerShell script with minimal dependencies.
 - A simple JSON based specification file.
 - Utilties to transfer data between SharePoint sites.
+- Uses the ETL (Export Transform Load) model.
+
+## Functionality
+
+### Creating SharePoint Import Files (New-Data.ps1)
+
+Randomly generate data that can be imported via Set-Data.ps1.
+
+This uses a json definition file that will be processed by the New-Data.ps1 script to generate a CSV file suitable for uploading via Set-Data.ps1.
+
+```json
+{}
+    "title": "Human readable title for the definition.",
+    "description": "Description of what the definition will generate.",
+    "lists": [
+    {
+        "rows": "1", // The number of rows to generate
+        "fields": [  
+            {
+                "title": "The InternalName of the field",
+                "pattern": "The pattern to use to generate the field"
+            }
+        ]
+    }
+    ]
+}
+```
 
 ## Getting Started
 

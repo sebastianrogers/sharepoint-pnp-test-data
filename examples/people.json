@@ -1,0 +1,33 @@
+{
+    "title": "people",
+    "description": "Generates sets of people data",
+    "lists": {
+        "rows": "1",
+        "fields": [
+            {
+                "title": "ListName",
+                "pattern": "Economy Nominations"
+            },
+            {
+                "title": "ContentType",
+                "pattern": "Nomination"
+            },
+            {
+                "title": "Key",
+                "pattern": "Nomination"
+            },
+            {
+                "title": "Forenames",
+                "pattern": "John"
+            },
+            {
+                "title": "Surname",
+                "pattern": "Brown"
+            },
+            {
+                "title": "Title",
+                "pattern": "Test Data"
+            }
+        ]
+    }
+}

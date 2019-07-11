@@ -25,9 +25,6 @@ $InformationPreference = 'continue'
 
 Write-Information -MessageData:"$(Get-Date) Started populating the $URL SharePoint site with test data based on the $Path configuration file."
 
-Connect-PnPOnline -Url:$URL
-Write-Verbose -Message:"Connected to the $URL SharePoint site."
-
 $Content = Get-Content -Path:$Path -Raw
 $JSON =  ConvertFrom-Json -InputObject:$Content
 
