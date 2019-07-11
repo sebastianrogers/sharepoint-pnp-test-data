@@ -29,6 +29,20 @@ $Append = $false
 $Definition = Get-Content -Path:$DefinitionPath -Raw |
     ConvertFrom-Json
 
+$Definition.lookups.PSObject.Properties |
+    ForEach-Object {
+        $Key = $PSItem.Name
+
+        $Lookup = $Definition.lookups.$Key
+
+        if ($Lookup.file) {
+            Get-Content -Path:$Lookup.file |
+                ForEach-Object {
+                    $Definition.lookups.$Key.values += $PSItem
+                }
+        }
+    }
+
 $Definition.lists |
     ForEach-Object {
 
@@ -46,9 +60,13 @@ $Definition.lists |
         $Definition.lookups.PSObject.Properties |
             ForEach-Object {
                 $Key = $PSItem.Name
-                $Lookup = $Definition.lookups.$Key
+                $Lookup = $Definition.lookups.$Key.values
 
-                $Lookups.$Key = $Lookup[$(Get-Random -Minimum:0 -Maximum:$Lookup.length)]
+                if ($Lookup.length -eq 0) {
+                    $Lookups.$Key = ""
+                } else {
+                    $Lookups.$Key = $Lookup[$(Get-Random -Minimum:0 -Maximum:$Lookup.length)]
+                }
             }
 
         $Fields | ForEach-Object {
