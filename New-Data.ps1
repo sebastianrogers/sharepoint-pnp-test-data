@@ -61,6 +61,12 @@ $Definition.lists |
                 $Value = $Value -replace "{lookup:$Key}", $Lookup
             }
 
+            $Fields | ForEach-Object {
+                $FieldTitle = $PSItem.title
+                $FieldValue = $Object.$FieldTitle
+                $Value = $Value -replace "{field:$FieldTitle}", $FieldValue
+            }
+
             $Object | Add-Member -MemberType:NoteProperty -Name:$Field.title -Value:$Value
         }
 

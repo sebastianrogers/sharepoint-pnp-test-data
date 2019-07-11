@@ -46,9 +46,10 @@ It can comprise:
 - Tokens
 - Regular expressions
 
-The tokens are evaulated first.
+The tokens are evaulated first in the following order.
 
-- {lookup:<lookup name>}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename}"
+- {lookup:name}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename}"
+- {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
 ## Getting Started
 
