@@ -33,6 +33,7 @@ function Get-RandomDate() {
 
 $Append = $false
 
+$DefinitionFolder = $(Get-ChildItem -Path:$DefinitionPath).Directory
 $Definition = Get-Content -Path:$DefinitionPath -Raw |
     ConvertFrom-Json
 
@@ -40,10 +41,12 @@ $Definition.lookups.PSObject.Properties |
     ForEach-Object {
         $Key = $PSItem.Name
 
+        Write-Verbose -Message:"Preparing the $Key lookup..."
+        
         $Lookup = $Definition.lookups.$Key
 
         if ($Lookup.file) {
-            Get-Content -Path:$Lookup.file |
+            Get-Content -Path:"$DefinitionFolder\$($Lookup.file)" |
                 ForEach-Object {
                     $Definition.lookups.$Key.values += $PSItem
                 }
@@ -59,6 +62,8 @@ $Definition.lists |
 
     1..$Rows | ForEach-Object {
         $Row = $PSItem
+
+        Write-Verbose "Generating row $Row..."
 
         $Object = New-Object PSObject
 
