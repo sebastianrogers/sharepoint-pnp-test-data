@@ -25,18 +25,6 @@ else {
     Set-PnPTraceLog -Off
 }
 
-Write-Host -Object:@"
-In order to update the application data you require the following:
-
-1. An existing Site Collection
-2. The list need to exist
-3. An account with contributor permissions.
-
-This installation package uses the PnP Provisioning library and is designed to be run from a client workstation.
-
-If running from a SharePoint server then the Loopback Check must be disabled.
-"@
-
 function Convert-SPClientField() {
 
     <# 
@@ -53,13 +41,14 @@ function Convert-SPClientField() {
     param (
         [Parameter(Mandatory = $false)]
         [Microsoft.SharePoint.Client.ClientContext]
-        $ClientContext = $SPClient.ClientContext,
+        $ClientContext,
         [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
         [Microsoft.SharePoint.Client.Field]
         $ClientObject
     )
     
     process {
+        Write-Host $ClientContext
         if ($ClientContext -eq $null) {
             throw "Cannot bind argument to parameter 'ClientContext' because it is null."
         }
@@ -98,7 +87,7 @@ function Set-Data() {
     $Fields = @{ }
 
     @($(Import-Csv -Path:$Path)).ForEach( {
-            if ($Count % 100 -eq 0) {
+            if ($Count % 1000 -eq 0) {
                 Write-Verbose -Message:"Reconnecting to SharePoint"
                 Connect-PnPOnline -Url:$Url -UseWebLogin
             }
@@ -203,7 +192,7 @@ function Set-Data() {
             $KeyValue = if ($Key) { $Values[$Key] } else { $null }
 
             $Values.Keys | ForEach-Object {
-                Write-Verbose $Values[$PSItem]
+                Write-Verbose "$PSItem = $($Values[$PSItem])"
             }
 
             if ($PSCmdlet.ShouldProcess($ListName, 'Add')) {
