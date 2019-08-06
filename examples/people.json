@@ -3,11 +3,11 @@
     "description": "Generates sets of people data",
     "lists": [
         {
-            "rows": "300",
+            "rows": "10",
             "fields": [
                 {
                     "title": "ListName",
-                    "pattern": "{lookup:listname}"
+                    "pattern": "{lookup:listname.title}"
                 },
                 {
                     "title": "ContentType",
@@ -19,59 +19,27 @@
                 },
                 {
                     "title": "Forenames",
-                    "pattern": "{lookup:forename}"
+                    "pattern": "{lookup:forename.title}"
                 },
                 {
                     "title": "Surname",
-                    "pattern": "{lookup:surname}"
+                    "pattern": "{lookup:surname.title}"
                 },
                 {
                     "title": "Title",
                     "pattern": "{field:Forenames} {field:Surname}"
                 },
                 {
-                    "title": "PostNoms",
-                    "pattern": "{lookup:postnoms}"
-                },
-                {
-                    "title": "NomineesGender",
-                    "pattern": "{lookup:gender}"
-                },
-                {
-                    "title": "Award",
-                    "pattern": "{lookup:award}"
-                },
-                {
-                    "title": "AwardRound",
-                    "pattern": "{lookup:awardround}"
-                },
-                {
-                    "title": "Public",
-                    "pattern": "{lookup:boolean}"
+                    "title": "Postcode",
+                    "pattern": "{lookup:address.postcode}"
                 },
                 {
                     "title": "Voluntary",
-                    "pattern": "{lookup:boolean}"
-                },
-                {
-                    "title": "NomineesOrigin",
-                    "pattern": "{lookup:nomineesorigin}"
-                },
-                {
-                    "title": "HonoursCoordinator",
-                    "pattern": "{lookup:user}"
-                },
-                {
-                    "title": "HonoursTeamOwner",
-                    "pattern": "{lookup:user}"
-                },
-                {
-                    "title": "InCurrentPost",
-                    "pattern": "{lookup:boolean}"
+                    "pattern": "{lookup:boolean.title}"
                 },
                 {
                     "title": "Nominator",
-                    "pattern": "{lookup:user}"
+                    "pattern": "{lookup:user.title}"
                 },
                 {
                     "title": "Telephone",
@@ -83,11 +51,7 @@
                 },
                 {
                     "title": "AgeNotConfirmed",
-                    "pattern": "{lookup:boolean}"
-                },
-                {
-                    "title": "BEISGroup",
-                    "pattern": "{lookup:beisgroup}"
+                    "pattern": "{lookup:boolean.title}"
                 }
             ]
         }
@@ -96,135 +60,45 @@
         "listname": {
             "file": "",
             "values": [
-                "Economy Nominations",
-                "State Nominations",
-                "STR Nominations"
+                {
+                    "title": "Economy Nominations"
+                },
+                {
+                    "title": "State Nominations"
+                },
+                {
+                    "title": "STR Nominations"
+                }
             ]
         },
-        "award": {
-            "file": "",
-            "values": [
-                "Kt/DBE",
-                "CBE",
-                "OBE",
-                "MBE",
-                "BEM",
-                "GBE",
-                "CH"
-            ]
-        },
-        "awardround": {
-            "file": "",
-            "values": [
-                "BD17",
-                "NY17",
-                "BD18",
-                "NY18",
-                "BD19",
-                "NY19"
-            ]
-        },
-        "beisgroup": {
-            "file": "",
-            "values": [
-                "Corporate Service",
-                "Business Sectors",
-                "Industrial Strategy, Science & Innovation",
-                "Energy Transformation & Clean Growth",
-                "Energy & Security",
-                "EU Exit and Analysis",
-                "Market Frameworks"
-            ]
+        "address": {
+            "file": "addresses.csv",
+            "values": []
         },
         "boolean": {
             "file": "",
             "values": [
-                "0",
-                "1"
+                {
+                    "title": "0"
+                },
+                {
+                    "title": "1"
+                }
             ]
         },
         "forename": {
-            "file": "examples\\first-names.txt",
+            "file": "first-names.csv",
             "values": []
-        },
-        "gender": {
-            "file": "",
-            "values": [
-                "Male",
-                "Female",
-                "Prefer not to say"
-            ]
-        },
-        "nomineesorigin": {
-            "file": "",
-            "values": [
-                "Not Known TBC",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "Non BAME",
-                "BAME Asian - Other",
-                "BAME Asian - Chinese",
-                "BAME Asian - Bangladeshi",
-                "BAME Asian - Indian",
-                "BAME Asian - Pakistani",
-                "BAME Black - Other",
-                "BAME Black - African",
-                "BAME Black - Caribbean",
-                "BAME Black African and White",
-                "BAME Black Caribbean and White",
-                "BAME Other",
-                "BAME Origin TBC"
-            ]
-        },
-        "postnoms": {
-            "file": "",
-            "values": [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "OBE"
-            ]
         },
         "surname": {
-            "file": "examples\\names.txt",
+            "file": "names.csv",
             "values": []
-        },
-        "ukregion": {
-            "file": "",
-            "values": [
-                "London",
-                "South East",
-                "Yorkshire &amp; Humber",
-                "North East",
-                "North West",
-                "East Midlands",
-                "West Midlands",
-                "East",
-                "South West",
-                "Wales",
-                "Northern Ireland",
-                "Scotland",
-                "Other",
-                "Unknown"
-            ]
         },
         "user": {
             "file": "",
             "values": [
-                "sebastian.rogers@beis.onmicrosoft.com",
-                "tina.oliver@beis.onmicrosoft.com"
+                "sebastian.rogers@example.onmicrosoft.com",
+                "tina.oliver@example.onmicrosoft.com"
             ]
         }
     }

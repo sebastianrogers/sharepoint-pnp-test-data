@@ -46,7 +46,7 @@ $Definition.lookups.PSObject.Properties |
         $Lookup = $Definition.lookups.$Key
 
         if ($Lookup.file) {
-            Get-Content -Path:"$DefinitionFolder\$($Lookup.file)" |
+            Get-Content -Path:"$DefinitionFolder\$($Lookup.file)" | ConvertFrom-Csv |
                 ForEach-Object {
                     $Definition.lookups.$Key.values += $PSItem
                 }
@@ -92,12 +92,15 @@ $Definition.lists |
             $Lookups.Keys | ForEach-Object {
                 $Key = $PSItem
                 $Lookup = $Lookups.$Key
-                $Value = $Value -replace "{lookup:$Key}", $Lookup
+                if ($Value -match "{lookup:$Key\.(?<field>.*)}") {
+                    $Value = $Value -replace "{lookup:$Key\.(?<field>.*)}", $Lookup.$($Matches.field)
+                }
             }
 
             $Fields | ForEach-Object {
                 $FieldTitle = $PSItem.title
                 $FieldValue = $Object.$FieldTitle
+
                 $Value = $Value -replace "{field:$FieldTitle}", $FieldValue
             }
 

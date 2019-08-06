@@ -47,10 +47,10 @@ It can comprise:
 - Tokens
 - Regular expressions
 
-The tokens are evaulated first in the following order.
+The tokens are evaluated first in the following order.
 
 - {telephone}, generates a string in the format "09999 999999"
-- {lookup:name}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename}"
+- {lookup:name.field}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename.title}"
 - {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
 ## Getting Started
@@ -107,11 +107,11 @@ Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of cond
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Sebastian Rogers** - *Initial work* - [sebastianrogers](https://github.com/sebastianrogers)
+- **Sebastian Rogers** - *Initial work* - [sebastianrogers](https://github.com/sebastianrogers)
 
 See also the list of [contributors](https://github.com/sebastianrogers/sharepoint-pnp-test-data/contributors) who participated in this project.
 
