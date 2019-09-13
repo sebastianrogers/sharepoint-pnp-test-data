@@ -129,6 +129,10 @@ function Set-Data() {
                                     -List:$ListName `
                                     -Identity:$Name
                                 
+                                if (-not $Field) {
+                                    Write-Error "Cannot get the $Name field in the $ListName list."
+                                }
+                                
                                 $Context.Load($Field)
                                 Invoke-PnPQuery    
                                 
