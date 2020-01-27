@@ -1,0 +1,121 @@
+{
+  "title": "correspondents",
+  "description": "Generates 1,000 test correspondents",
+  "lists": [
+    {
+      "rows": "1000",
+      "fields": [
+        {
+          "title": "ListName",
+          "pattern": "Correspondents"
+        },
+        {
+          "title": "ContentType",
+          "pattern": "Correspondent"
+        },
+        {
+          "title": "Key",
+          "pattern": "Title"
+        },
+        {
+          "title": "FirstName",
+          "pattern": "{lookup:forename.title}"
+        },
+        {
+          "title": "FamilyName",
+          "pattern": "{lookup:surname.title}"
+        },
+        {
+          "title": "CorrespondentGender",
+          "pattern": "{lookup:gender.title}"
+        },
+        {
+          "title": "PrimaryNumber",
+          "pattern": "{telephone}"
+        },
+        {
+          "title": "IsCentre",
+          "pattern": "{lookup:iscentre.title}"
+        },
+        {
+          "title": "IsChild",
+          "pattern": "{lookup:ischild.title}"
+        },
+        {
+          "title": "IsCondolences",
+          "pattern": "{lookup:iscondolences.title}"
+        },
+        {
+          "title": "IsDeceased",
+          "pattern": "{lookup:isdeceased.title}"
+        },
+        {
+          "title": "IsPersistent",
+          "pattern": "{lookup:ispersistent.title}"
+        },
+        {
+          "title": "WorkAddress",
+          "pattern": "{lookup:address.street}"
+        },
+        {
+          "title": "WorkCity",
+          "pattern": "{lookup:address.town}"
+        },
+        {
+          "title": "County",
+          "pattern": "{lookup:address.county}"
+        },
+        {
+          "title": "WorkCountry",
+          "pattern": "{lookup:address.country}"
+        },
+        {
+          "title": "WorkZip",
+          "pattern": "{lookup:address.postcode}"
+        }
+      ]
+    }
+  ],
+  "lookups": {
+    "ispersistent": {
+      "file": "boolean.csv",
+      "values": []
+    },
+    "isdeceased": {
+      "file": "boolean.csv",
+      "values": []
+    },
+    "iscondolences": {
+      "file": "boolean.csv",
+      "values": []
+    },
+    "iscentre": {
+      "file": "boolean.csv",
+      "values": []
+    },
+    "ischild": {
+      "file": "boolean.csv",
+      "values": []
+    },
+    "forename": {
+      "file": "first-names.csv",
+      "values": []
+    },
+    "surname": {
+      "file": "names.csv",
+      "values": []
+    },
+    "honorific-suffix": {
+      "file": "honorific-suffix.csv",
+      "values": []
+    },
+    "gender": {
+      "file": "",
+      "values": ["Male", "Female", ""]
+    },
+    "address": {
+      "file": "addresses.csv",
+      "values": []
+    }
+  }
+}
