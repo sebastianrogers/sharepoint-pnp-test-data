@@ -47,6 +47,9 @@ else {
     Set-PnPTraceLog -Off
 }
 
+#Required otherwise you get lots of disconnects.
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 $RandomFiles = get-childitem $ExampleFilePath
 $conjunction = "for", "and", "nor", "but", "or", "yet", "so", "the", "my", "we", "our"
 #Dictionary list of words.
@@ -120,7 +123,7 @@ $depth++;
 $list = Get-PnpList -Identity:$ListName
 Write-Verbose $list.RootFolder.ServerRelativeUrl
 $rootFolder = $list.RootFolder.ServerRelativeUrl
-$siteRelativePath = $rootFolder.Substring($rootFolder.LastIndexOf('/')+1)
+$siteRelativePath = $rootFolder.Substring($rootFolder.LastIndexOf('/') + 1)
 $Folder = Get-PnPFolder -Url ($siteRelativePath)
 CreateFoldersAndFiles -CurrentDepth $MaxFolderDepth -FolderPath $siteRelativePath
 Write-Information -MessageData:"Completed adding files to: $ListName"
