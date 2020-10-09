@@ -54,6 +54,18 @@ The tokens are evaluated first in the following order.
 - {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
 
+### Exporting SharePoint Site (Export-Site.ps1)
+
+There is a helper function that will allow you to export an entire SharePoint Site to a folder.
+
+Each non hidden list will be exported as a csv file in the folder specified by the Path parameter
+
+```ps1
+https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Export-Site.ps1 -List:Documents -Path:.\temp
+```
+
+
 ### Exporting SharePoint Lists (Export-List.ps1)
 
 Export data from an existing SharePoint List
