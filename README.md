@@ -54,13 +54,20 @@ The tokens are evaluated first in the following order.
 - {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
 
-### Exporting SharePoint Lists (Get-Data.ps1)
+### Exporting SharePoint Lists (Export-List.ps1)
 
 Export data from an existing SharePoint List
 
 ```ps1
 https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\Get-List.ps1 -List:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
+.\Export-List.ps1 -List:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
+```
+
+Optionally you can specify a list of fields to export by using their internal names
+
+```ps1
+https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Export-List.ps1 -List:Documents -Fields:@("Title", "Name") | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 
 ## Getting Started

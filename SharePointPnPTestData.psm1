@@ -1,4 +1,4 @@
-function Get-Data() {
+function Export-List() {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The title of the list to get the data from

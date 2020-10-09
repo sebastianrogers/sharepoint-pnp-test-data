@@ -34,7 +34,7 @@ if ($Fields.Length -eq 0) {
     $Fields = Get-ListFieldInternalNameCollection -List:$List
 }
 
-Get-Data `
+Export-List `
     -List:$List `
     -Fields:$Fields |
     Write-Output
