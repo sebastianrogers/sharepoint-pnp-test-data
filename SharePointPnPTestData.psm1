@@ -5,18 +5,17 @@ function Get-Data() {
         [Parameter(Mandatory)][string]$List,
 
         # The fields in the list to get the data from
-        [Parameter(Mandatory)][array]$Fields,
-
-        # The CSV file to write the data to
-        [Parameter(Mandatory)][string]$Path
+        [Parameter(Mandatory)][AllowNull()][array]$Fields
     )
 
     $Context = Get-PnPContext
 
+    if (-not $Fields) {
+        Get-PnPField -List:$List
+    }
+
     $ListItems = Get-PnPListItem `
         -List:$List
-
-    $Append = $false
 
     $ListItems |
     ForEach-Object {
@@ -28,14 +27,13 @@ function Get-Data() {
 
         $Object = New-Object PSObject
         $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
-        $Object | Add-Member -MemberType:NoteProperty -Name:"ContentType" -Value:$Item.ContentType.Name
 
         $Fields |
         ForEach-Object {
             $Key = $PSItem
             $Value = $null        
 
-            if ($Item.FieldValues[$Key] -ne $null) {
+            if ($null -ne $Item.FieldValues[$Key]) {
                 $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
                     "DateTime" {
                         $Item.FieldValues[$Key].ToString("o")
@@ -52,8 +50,18 @@ function Get-Data() {
             $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
         }
 
-        Export-Csv -Path:$Path -InputObject:$Object -NoTypeInformation -Append:$Append
-
-        $Append = $true
+        Write-Output -InputObject:$Object
     }
+}
+
+function Get-ListFieldInternalNameCollection() {
+    param(
+        # The title of the list to get the data from
+        [Parameter(Mandatory)][string]$List
+    )
+
+    Get-PnPField -List:$List | 
+    Where-Object Hidden -ne $true | 
+    ForEach-Object { Write-Output $PSItem.InternalName } | 
+    Write-Output
 }

@@ -53,6 +53,16 @@ The tokens are evaluated first in the following order.
 - {lookup:name.field}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename.title}"
 - {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
+
+### Exporting SharePoint Lists (Get-Data.ps1)
+
+Export data from an existing SharePoint List
+
+```ps1
+https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Get-List.ps1 -List:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
+```
+
 ## Getting Started
 
 Clone the repository.
@@ -102,9 +112,9 @@ Tests are run by using the example csv files in the [examples](./examples) folde
 
 They require a SharePoint Site with an Example list.
 
-```ps
+```ps1
 Connect-PnPOnline -Url:https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\set-Data.ps1 -Path:.\examples\example.csv -Verbose
+.\Set-Data.ps1 -Path:.\examples\example.csv -Verbose
 ```
 
 ## Contributing

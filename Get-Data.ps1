@@ -15,10 +15,7 @@ param(
     [Parameter(Mandatory)][string]$List,
 
     # The fields in the list to get the data from
-    [Parameter(Mandatory)][array]$Fields,
-
-    # The CSV file to write the data to
-    [Parameter(Mandatory)][string]$Path
+    [string[]]$Fields = @()
 )
 
 $ErrorActionPreference = 'stop'
@@ -33,7 +30,11 @@ else {
 
 Import-Module -Name:./SharePointPnPTestData.psm1 -Force
 
+if ($Fields.Length -eq 0) {
+    $Fields = Get-ListFieldInternalNameCollection -List:$List
+}
+
 Get-Data `
     -List:$List `
-    -Fields:$Fields `
-    -Path:$Path
+    -Fields:$Fields |
+    Write-Output
