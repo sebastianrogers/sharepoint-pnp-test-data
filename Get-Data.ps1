@@ -11,9 +11,6 @@ Export the Action Definitions from a demo site.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    # The URL of the site collection to get the lists data from
-    [Parameter(Mandatory)][string]$URL,
-
     # The title of the list to get the data from
     [Parameter(Mandatory)][string]$List,
 
@@ -34,10 +31,9 @@ else {
     Set-PnPTraceLog -Off
 }
 
-Import-Module -Name:./TestData.psm1
+Import-Module -Name:./SharePointPnPTestData.psm1 -Force
 
 Get-Data `
-    -URL:$URL `
     -List:$List `
     -Fields:$Fields `
     -Path:$Path
