@@ -2,7 +2,7 @@ function Export-List() {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The title of the list to get the data from
-        [Parameter(Mandatory)][string]$List,
+        [Parameter(Mandatory)][string]$Identity,
 
         # The fields in the list to get the data from
         [Parameter(Mandatory)][AllowNull()][array]$Fields
@@ -11,11 +11,12 @@ function Export-List() {
     $Context = Get-PnPContext
 
     if (-not $Fields) {
-        Get-PnPField -List:$List
+        Get-PnPField -List:$Identity
     }
 
     $ListItems = Get-PnPListItem `
-        -List:$List
+        -List:$Identity `
+        -PageSize:5000
 
     $ListItems |
     ForEach-Object {
@@ -26,7 +27,7 @@ function Export-List() {
         Invoke-PnPQuery
 
         $Object = New-Object PSObject
-        $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$List
+        $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$Identity
 
         $Fields |
         ForEach-Object {

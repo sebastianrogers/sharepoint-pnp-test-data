@@ -61,8 +61,8 @@ There is a helper function that will allow you to export an entire SharePoint Si
 Each non hidden list will be exported as a csv file in the folder specified by the Path parameter
 
 ```ps1
-https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\Export-Site.ps1 -List:Documents -Path:.\temp
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Export-Site.ps1 -Path:.\temp
 ```
 
 
@@ -71,15 +71,15 @@ https://<tenant>.sharepoint.com/sites/Demo -UseWeb
 Export data from an existing SharePoint List
 
 ```ps1
-https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\Export-List.ps1 -List:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Export-List.ps1 -Identity:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 
 Optionally you can specify a list of fields to export by using their internal names
 
 ```ps1
-https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\Export-List.ps1 -List:Documents -Fields:@("Title", "Name") | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+.\Export-List.ps1 -Identity:Documents -Fields:@("Title", "Name") | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 
 ## Getting Started

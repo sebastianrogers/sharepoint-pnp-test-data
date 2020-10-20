@@ -12,7 +12,7 @@ Export the Action Definitions from a demo site.
 [CmdletBinding(SupportsShouldProcess)]
 param(
     # The title of the list to get the data from
-    [Parameter(Mandatory)][string]$List,
+    [Parameter(Mandatory)][string]$Identity,
 
     # The fields in the list to get the data from
     [string[]]$Fields = @()
@@ -31,10 +31,10 @@ else {
 Import-Module -Name:./SharePointPnPTestData.psm1 -Force
 
 if ($Fields.Length -eq 0) {
-    $Fields = Get-ListFieldInternalNameCollection -List:$List
+    $Fields = Get-ListFieldInternalNameCollection -List:$Identity
 }
 
 Export-List `
-    -List:$List `
+    -Identity:$Identity `
     -Fields:$Fields |
     Write-Output
