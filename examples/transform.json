@@ -5,10 +5,10 @@
         },
         "Editor": {
             "type": "transform",
-            "transform": "user"
+            "lookup": "user"
         }
     },
-    "transform": {
+    "lookup": {
         "user": {
             "Pauline Topper": "Jane Dolan",
             "Peter Green": "Jasper Conrad"

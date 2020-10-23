@@ -1,3 +1,45 @@
+function Convert-Data() {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [object]
+        $Source,
+
+        [Parameter(Mandatory)]
+        [object]
+        $Mapping,
+
+        [object]
+        $Lookup
+    )
+
+    $Source |
+    ForEach-Object {
+        $Row = $PSItem
+
+        $Row.PSObject.Properties |
+        ForEach-Object {
+            $Property = $PSItem
+            $Name = $Property.Name
+            $SourceValue = $Property.Value
+            $ItemMapping = $Mapping.$Name
+            $Row.$Name = switch ($ItemMapping.type) {
+                "lookup" {
+                    $Transform.$($ItemMapping.lookup).$SourceValue
+                }
+                "md5" {
+                    Get-StringHash -String:$SourceValue     
+                }
+                default {
+                    $SourceValue
+                }
+            }
+        }
+
+        Write-Output $Row
+    }
+}
+
 function Export-List() {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -65,4 +107,12 @@ function Get-ListFieldInternalNameCollection() {
     Where-Object Hidden -ne $true | 
     ForEach-Object { Write-Output $PSItem.InternalName } | 
     Write-Output
+}
+
+function Get-StringHash([String] $String, $HashName = "MD5") {
+    $StringBuilder = New-Object System.Text.StringBuilder
+    [System.Security.Cryptography.HashAlgorithm]::Create($HashName).ComputeHash([System.Text.Encoding]::UTF8.GetBytes($String)) | % {
+        [Void]$StringBuilder.Append($_.ToString("x2"))
+    }
+    $StringBuilder.ToString()
 }
