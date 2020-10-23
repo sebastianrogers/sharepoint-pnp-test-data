@@ -1,0 +1,17 @@
+{
+    "mapping": {
+        "Author": {
+            "type": "md5"
+        },
+        "Editor": {
+            "type": "transform",
+            "transform": "user"
+        }
+    },
+    "transform": {
+        "user": {
+            "Pauline Topper": "Jane Dolan",
+            "Peter Green": "Jasper Conrad"
+        }
+    }
+}
