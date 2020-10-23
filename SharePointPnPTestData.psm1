@@ -47,25 +47,36 @@ function Export-List() {
         [Parameter(Mandatory)][string]$Identity,
 
         # The fields in the list to get the data from
-        [Parameter(Mandatory)][AllowNull()][array]$Fields
-    )
+        [Parameter(Mandatory)][AllowNull()][array]$Fields,
 
-    $Context = Get-PnPContext
+        # The page size to use for exporting
+        # the default is 5,000
+        [int]$PageSize = 5000
+        #,
+
+        # # If supplied a URL to use to reconnect after each page
+        # [int]$URL,
+
+        # # If supplied use the Web Login when reconnecting
+        # [switch]$UseWebLogin
+
+    )
 
     if (-not $Fields) {
         Get-PnPField -List:$Identity
     }
 
-    $ListItems = Get-PnPListItem `
+    Get-PnPListItem `
         -List:$Identity `
-        -PageSize:5000
-
-    $ListItems |
+        -PageSize:$PageSize `
+        -ScriptBlock {
+        Param($ItemCollection)
+        $ItemCollection.Context.ExecuteQuery()
+    } |
     ForEach-Object {
         $Item = $PSItem
-
-        $Context.Load($Item.ContentType)
-        $Context.Load($Item.FieldValuesAsText)
+        $Item.Context.Load($Item.ContentType)
+        $Item.Context.Load($Item.FieldValuesAsText)
         Invoke-PnPQuery
 
         $Object = New-Object PSObject

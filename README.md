@@ -65,6 +65,8 @@ Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
 .\Export-Site.ps1 -Path:.\temp
 ```
 
+The page size used to batch the exposrts can be modified by using the -PageSize parameter.
+
 ### Exporting SharePoint Lists (Export-List.ps1)
 
 Export data from an existing SharePoint List
@@ -73,6 +75,8 @@ Export data from an existing SharePoint List
 Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
 .\Export-List.ps1 -Identity:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
+
+The page size used to batch the exposrts can be modified by using the -PageSize parameter.
 
 Optionally you can specify a list of fields to export by using their internal names
 

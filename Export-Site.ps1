@@ -13,7 +13,10 @@ Export the Action Definitions from a demo site.
 param(
     [Parameter(Mandatory)]
     [string]
-    $Path
+    $Path,
+
+    # The maximum number of results to process as a batch
+    [int]$PageSize
 )
 
 $ErrorActionPreference = 'stop'
@@ -32,10 +35,14 @@ Get-PnPList |
 Where-Object -Property:Hidden -ne $true |
 Select-Object -Property:"Title" |
 ForEach-Object {
-    $List = $PSItem.Title
+    $ListTitle = $PSItem.Title
 
+    Write-Verbose "Exporting the $ListTitle list..."
+
+    $Fields = Get-ListFieldInternalNameCollection -List:$ListTitle
     Export-List `
-        -List:$List `
-        -Fields:$(Get-ListFieldInternalNameCollection -List:$List) |
-    Export-Csv -Path:"$Path\$List.csv" -NoTypeInformation
+        -Identity:$ListTitle `
+        -Fields:$Fields `
+        -PageSize:$PageSize |
+    Export-Csv -Path:"$Path\$ListTitle.csv" -NoTypeInformation
 }

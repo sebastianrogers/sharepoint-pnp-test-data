@@ -15,7 +15,10 @@ param(
     [Parameter(Mandatory)][string]$Identity,
 
     # The fields in the list to get the data from
-    [string[]]$Fields = @()
+    [string[]]$Fields = @(),
+
+    # The maximum number of results to process as a batch
+    [int]$PageSize
 )
 
 $ErrorActionPreference = 'stop'
@@ -36,5 +39,6 @@ if ($Fields.Length -eq 0) {
 
 Export-List `
     -Identity:$Identity `
-    -Fields:$Fields |
+    -Fields:$Fields `
+    -PageSize:$PageSize |
     Write-Output
