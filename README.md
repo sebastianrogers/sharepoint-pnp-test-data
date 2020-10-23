@@ -1,6 +1,6 @@
 # SharePoint PnP Test Data
 
-Generate large quantities of data using the PnP library for SharePoint Online, 2016 and 2013.
+Generate large quantities of data using the PnP library for SharePoint Online, 2019, 2016 and 2013.
 
 -   An easy to install and use PowerShell script with minimal dependencies.
 -   A simple JSON based specification file.
