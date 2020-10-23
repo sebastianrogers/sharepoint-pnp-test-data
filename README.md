@@ -119,6 +119,10 @@ The transform definition is a json file that lists the mappings to use and optio
 - source-value, when a value matches use the corresponding target-value in the transformed file
 - target-value, the value to replace the source-value with
 
+```ps1
+.\Convert-Folder.ps1 -SourcePath:.\exported -TransformPath:.\transform.json -TargetPath:.\transformed
+```
+
 ## Getting Started
 
 Clone the repository.
