@@ -16,7 +16,13 @@ param(
     $Path,
 
     # The maximum number of results to process as a batch
-    [int]$PageSize
+    [int]$PageSize = 5000,
+
+    # If supplied a URL to use to reconnect after each page
+    [string]$URL,
+
+    # If supplied use the Web Login when reconnecting
+    [switch]$UseWebLogin
 )
 
 $ErrorActionPreference = 'stop'
@@ -29,7 +35,7 @@ else {
     Set-PnPTraceLog -Off
 }
 
-Import-Module -Name:./SharePointPnPTestData.psm1 -Force
+Import-Module -Name:./SharePointPnPTestData.psm1 -ArgumentList:@($ErrorActionPreference, $InformationPreference, $VerbosePreference) -Force
 
 Get-PnPList |
 Where-Object -Property:Hidden -ne $true |
@@ -43,6 +49,8 @@ ForEach-Object {
     Export-List `
         -Identity:$ListTitle `
         -Fields:$Fields `
-        -PageSize:$PageSize |
+        -PageSize:$PageSize `
+        -URL:$URL `
+        -UseWebLogin:$UseWebLogin |
     Export-Csv -Path:"$Path\$ListTitle.csv" -NoTypeInformation
 }

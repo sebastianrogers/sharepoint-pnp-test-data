@@ -1,3 +1,29 @@
+param(
+    [Parameter(Position = 0)]
+    [string]
+    $ErrorAction,
+
+    [Parameter(Position = 1)]
+    [string]
+    $Information,
+
+    [Parameter(Position = 2)]
+    [string]
+    $Verbose
+)
+
+if ($ErrorAction) {
+    $ErrorActionPreference = $ErrorAction
+}
+
+if ($Verbose) {
+    $InformationPreference = $Information
+}
+
+if ($ErrorAction) {
+    $VerbosePreference = $Verbose
+}
+
 function Convert-Data() {
     [CmdletBinding()]
     param (
@@ -51,30 +77,49 @@ function Export-List() {
 
         # The page size to use for exporting
         # the default is 5,000
-        [int]$PageSize = 5000
-        #,
+        [int]$PageSize = 5000,
 
-        # # If supplied a URL to use to reconnect after each page
-        # [int]$URL,
+        # If supplied a URL to use to reconnect after each page
+        [string]$URL,
 
-        # # If supplied use the Web Login when reconnecting
-        # [switch]$UseWebLogin
-
+        # If supplied use the Web Login when reconnecting
+        [switch]$UseWebLogin
     )
 
     if (-not $Fields) {
         Get-PnPField -List:$Identity
     }
 
-    Get-PnPListItem `
-        -List:$Identity `
-        -PageSize:$PageSize `
-        -ScriptBlock {
-        Param($ItemCollection)
-        $ItemCollection.Context.ExecuteQuery()
-    } |
-    ForEach-Object {
-        $Item = $PSItem
+    Write-Verbose "Getting $Identity list details..."
+    $List = Get-PnPList -Identity:$Identity
+
+    $ItemCount = $List.ItemCount
+    Write-Verbose "The $Identity list has $ItemCount items."
+
+    $ItemTotal = $ItemCount
+    $ItemID = 0
+
+    while ($ItemID -lt $ItemTotal) {
+        $PageID = ($ItemID) % $PageSize
+
+        if ($URL -and ($PageID -eq 0)) {
+            Write-Verbose "Connecting to $URL..."
+            Connect-PnPOnline -Url:$URL -UseWebLogin:$UseWebLogin
+        }
+
+        $ItemID = $ItemID + 1
+        Write-Verbose "Exporting the $ItemID item..."
+
+        $Item = Get-PnPListItem `
+            -List:$Identity `
+            -Id:$ItemID
+
+        if (-not $Item) {
+            Write-Warning "Cannot find the item with a $ItemID list ID."
+            $ItemTotal = $ItemTotal+1
+            continue
+        }
+
         $Item.Context.Load($Item.ContentType)
         $Item.Context.Load($Item.FieldValuesAsText)
         Invoke-PnPQuery
@@ -106,6 +151,46 @@ function Export-List() {
 
         Write-Output -InputObject:$Object
     }
+    # Get-PnPListItem `
+    #     -List:$Identity `
+    #     -PageSize:$PageSize `
+    #     -ScriptBlock {
+    #     Param($ItemCollection)
+    #     $ItemCollection.Context.ExecuteQuery()
+    # } |
+    # ForEach-Object {
+    #     $Item = $PSItem
+    #     $Item.Context.Load($Item.ContentType)
+    #     $Item.Context.Load($Item.FieldValuesAsText)
+    #     Invoke-PnPQuery
+
+    #     $Object = New-Object PSObject
+    #     $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$Identity
+
+    #     $Fields |
+    #     ForEach-Object {
+    #         $Key = $PSItem
+    #         $Value = $null        
+
+    #         if ($null -ne $Item.FieldValues[$Key]) {
+    #             $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
+    #                 "DateTime" {
+    #                     $Item.FieldValues[$Key].ToString("o")
+    #                     break
+    #                 }
+    #                 "Boolean" {
+    #                     if ($Item.FieldValuesAsText[$Key] -eq "Yes") { $true } else { $false }
+    #                     break
+    #                 }
+    #                 default { $Item.FieldValuesAsText[$Key] }
+    #             }
+    #         }
+            
+    #         $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
+    #     }
+
+    #     Write-Output -InputObject:$Object
+    # }
 }
 
 function Get-ListFieldInternalNameCollection() {

@@ -61,18 +61,18 @@ There is a helper function that will allow you to export an entire SharePoint Si
 Each non hidden list will be exported as a csv file in the folder specified by the Path parameter
 
 ```ps1
-Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
-.\Export-Site.ps1 -Path:.\temp
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo
+.\Export-Site.ps1 -Path:.\temp -URL:ttps://<tenant>.sharepoint.com/sites/Demo
 ```
 
-The page size used to batch the exposrts can be modified by using the -PageSize parameter.
+The page size used to batch the exports can be modified by using the -PageSize parameter.
 
 ### Exporting SharePoint Lists (Export-List.ps1)
 
 Export data from an existing SharePoint List
 
 ```ps1
-Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo
 .\Export-List.ps1 -Identity:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 
@@ -81,7 +81,7 @@ The page size used to batch the exposrts can be modified by using the -PageSize 
 Optionally you can specify a list of fields to export by using their internal names
 
 ```ps1
-Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo -UseWeb
+Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo
 .\Export-List.ps1 -Identity:Documents -Fields:@("Title", "Name") | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 

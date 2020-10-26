@@ -18,7 +18,13 @@ param(
     [string[]]$Fields = @(),
 
     # The maximum number of results to process as a batch
-    [int]$PageSize
+    [int]$PageSize = 5000,
+
+    # If supplied a URL to use to reconnect after each page
+    [string]$URL,
+
+    # If supplied use the Web Login when reconnecting
+    [switch]$UseWebLogin
 )
 
 $ErrorActionPreference = 'stop'
@@ -40,5 +46,7 @@ if ($Fields.Length -eq 0) {
 Export-List `
     -Identity:$Identity `
     -Fields:$Fields `
-    -PageSize:$PageSize |
-    Write-Output
+    -PageSize:$PageSize `
+    -URL:$URL `
+    -UseWebLogin:$UseWebLogin |
+Write-Output
