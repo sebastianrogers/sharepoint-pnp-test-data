@@ -112,7 +112,8 @@ function Export-List() {
 
         $Item = Get-PnPListItem `
             -List:$Identity `
-            -Id:$ItemID
+            -Id:$ItemID `
+            -ErrorAction:SilentlyContinue
 
         if (-not $Item) {
             Write-Warning "Cannot find the item with a $ItemID list ID."
