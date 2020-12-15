@@ -106,6 +106,8 @@ function Set-Data() {
                     $Name = $PSItem.Name
                     $Value = $PSItem.Value
 
+                    Write-Verbose "$Name : $Value"
+
                     switch ($Name) {
                         "ContentType" {
                             $ContentType = $Value

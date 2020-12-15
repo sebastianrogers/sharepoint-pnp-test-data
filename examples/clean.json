@@ -1,0 +1,52 @@
+{
+    "mapping": {
+        "ResponsibleEmail": {
+            "type": "md5"
+        },
+        "ID": {
+            "type": "remove"
+        },
+        "Author": {
+            "type": "remove"
+        },
+        "Created": {
+            "type": "remove"
+        },
+        "Editor": {
+            "type": "remove"
+        },
+        "Modified": {
+            "type": "remove"
+        },
+        "_UIVersionString": {
+            "type": "remove"
+        },
+        "Attachments": {
+            "type": "remove"
+        },
+        "Edit": {
+            "type": "remove"
+        },
+        "LinkTitleNoMenu": {
+            "type": "remove"
+        },
+        "LinkTitle": {
+            "type": "remove"
+        },
+        "DocIcon": {
+            "type": "remove"
+        },
+        "ItemChildCount": {
+            "type": "remove"
+        },
+        "FolderChildCount": {
+            "type": "remove"
+        },
+        "AppAuthor": {
+            "type": "remove"
+        },
+        "AppEditor": {
+            "type": "remove"
+        }
+    }
+}

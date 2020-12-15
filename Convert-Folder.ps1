@@ -20,11 +20,13 @@ The transform definition is a json file
     }
 ```
 
+```md
 | Transform | Effect                                                                                                 |
 | --------- | ------------------------------------------------------------------------------------------------------ |
 | lookup    | Replaces the field value with the matching value from the lookup if there is a match                   |
 | md5       | Replaces the field value with its md5 hash, this in effect anonymises it but preerves its distinctness |
-
+| remove    | Removes the field from the output                                                                      |
+```
 #>
 
 param(
@@ -44,7 +46,7 @@ param(
     $TransformPath
 )
 
-Import-Module -Name:./SharePointPnPTestData.psm1 -Force
+Import-Module -Name:$PSScriptRoot/SharePointPnPTestData.psm1 -Force
 
 $Mapping = $(Get-Content -Path:$TransformPath | ConvertFrom-Json).mapping
 $Lookup = $(Get-Content -Path:$TransformPath | ConvertFrom-Json).lookup

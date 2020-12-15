@@ -41,28 +41,41 @@ function Convert-Data() {
 
     $Source |
     ForEach-Object {
-        $Row = $PSItem
+        $SourceRow = $PSItem
 
-        $Row.PSObject.Properties |
+        $TargetRow = [pscustomobject]@{}
+
+        $SourceRow.PSObject.Properties |
         ForEach-Object {
             $Property = $PSItem
             $Name = $Property.Name
             $SourceValue = $Property.Value
             $ItemMapping = $Mapping.$Name
-            $Row.$Name = switch ($ItemMapping.type) {
+            switch ($ItemMapping.type) {
                 "lookup" {
-                    $Transform.$($ItemMapping.lookup).$SourceValue
+                    $TargetRow | Add-member `
+                        -MemberType:NoteProperty `
+                        -Name:$Name `
+                        -Value:$($Transform.$($ItemMapping.lookup).$SourceValue)
                 }
                 "md5" {
-                    Get-StringHash -String:$SourceValue     
+                    $TargetRow | Add-member `
+                        -MemberType:NoteProperty `
+                        -Name:$Name `
+                        -Value:$(Get-StringHash -String:$SourceValue)
+                }
+                "remove" {
                 }
                 default {
-                    $SourceValue
+                    $TargetRow | Add-member `
+                        -MemberType:NoteProperty `
+                        -Name:$Name `
+                        -Value:$SourceValue
                 }
             }
         }
 
-        Write-Output $Row
+        Write-Output $TargetRow
     }
 }
 

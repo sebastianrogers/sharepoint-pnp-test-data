@@ -1,0 +1,103 @@
+{
+    "mapping": {
+        "Author": {
+            "type": "md5"
+        },
+        "Editor": {
+            "type": "md5"
+        },
+        "InsertedBy": {
+            "type": "md5"
+        },
+        "RetiredBy": {
+            "type": "md5"
+        },
+        "UpdatedBy": {
+            "type": "md5"
+        },
+        "CaseDescription": {
+            "type": "md5"
+        },
+        "CMSUser": {
+            "type": "md5"
+        },
+        "CorrespondentName": {
+            "type": "md5"
+        },
+        "Salutation": {
+            "type": "md5"
+        },
+        "CeremonialName": {
+            "type": "md5"
+        },
+        "ClosedBy": {
+            "type": "md5"
+        },
+        "Constituency": {
+            "type": "md5"
+        },
+        "CorrectAddress": {
+            "type": "md5"
+        },
+        "DetailCache": {
+            "type": "md5"
+        },
+        "Envelope": {
+            "type": "md5"
+        },
+        "FirstName": {
+            "type": "md5"
+        },
+        "FamilyName": {
+            "type": "md5"
+        },
+        "Organisation": {
+            "type": "md5"
+        },
+        "Position": {
+            "type": "md5"
+        },
+        "ReportedBy": {
+            "type": "md5"
+        },
+        "ResponsibleUser": {
+            "type": "md5"
+        },
+        "TOEmail": {
+            "type": "md5"
+        },
+        "WorkZip": {
+            "type": "md5"
+        },
+        "WorkAddress": {
+            "type": "md5"
+        },
+        "WorkCity": {
+            "type": "md5"
+        },
+        "County": {
+            "type": "md5"
+        },
+        "PrimaryNumber": {
+            "type": "md5"
+        },
+        "WorkCountry": {
+            "type": "md5"
+        },
+        "EMail": {
+            "type": "md5"
+        },
+        "CellPhone": {
+            "type": "md5"
+        },
+        "WorkFax": {
+            "type": "md5"
+        },
+        "Bio": {
+            "type": "md5"
+        },
+        "Details": {
+            "type": "md5"
+        }
+    }
+}

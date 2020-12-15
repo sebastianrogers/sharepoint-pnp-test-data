@@ -2,10 +2,10 @@
 
 Generate large quantities of data using the PnP library for SharePoint Online, 2019, 2016 and 2013.
 
--   An easy to install and use PowerShell script with minimal dependencies.
--   A simple JSON based specification file.
--   Utilties to transfer data between SharePoint sites.
--   Uses the ETL (Export Transform Load) model.
+- An easy to install and use PowerShell script with minimal dependencies.
+- A simple JSON based specification file.
+- Utilties to transfer data between SharePoint sites.
+- Uses the ETL (Export Transform Load) model.
 
 ## Functionality
 
@@ -76,7 +76,7 @@ Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo
 .\Export-List.ps1 -Identity:Documents | Export-Csv -Path:.\temp\Documents.csv -NoTypeInformation
 ```
 
-The page size used to batch the exposrts can be modified by using the -PageSize parameter.
+The page size used to batch the exports can be modified by using the -PageSize parameter.
 
 Optionally you can specify a list of fields to export by using their internal names
 
@@ -95,6 +95,7 @@ The transformed files are copied to a folder so that the original files are not 
 | --------- | ------------------------------------------------------------------------------------------------------ |
 | lookup    | Replaces the field value with the matching value from the lookup if there is a match                   |
 | md5       | Replaces the field value with its md5 hash, this in effect anonymises it but preerves its distinctness |
+| remove    | Removes the field from the output                                                                      |
 
 The transform definition is a json file that lists the mappings to use and optionally any lookups
 
