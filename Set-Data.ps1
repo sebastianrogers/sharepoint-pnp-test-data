@@ -48,7 +48,6 @@ function Convert-SPClientField() {
     )
     
     process {
-        Write-Host $ClientContext
         if ($null -eq $ClientContext) {
             throw "Cannot bind argument to parameter 'ClientContext' because it is null."
         }
@@ -136,7 +135,7 @@ function Set-Data() {
                                 }
                                 
                                 $Context.Load($Field)
-                                Invoke-PnPQuery    
+                                Invoke-PnPQuery  
                                 
                                 $Fields[$Name] = $Field
                             }
@@ -153,15 +152,13 @@ function Set-Data() {
                                 "Lookup" {
                                     if ($Value) {
                                         $LookupField = Convert-SPClientField -ClientContext:$Context -ClientObject:$Field
-                                        #Convert to Microsoft.SharePoint.Client.FieldLookup
-                                        Write-Host $LookupField.LookupList "-" $Value "-" $LookupField.LookupField
+                                        Write-Verbose "$($LookupField.LookupList) - $Value - $($LookupField.LookupField)"
                                        
                                         $LookupItem = Get-PnPListItem `
                                             -List:$LookupField.LookupList `
                                             -Query:"<View><Query><Where><Eq><FieldRef Name='$($LookupField.LookupField)'/><Value Type='Text'>$Value</Value></Eq></Where></Query></View>" `
         
                                         $Values[$Name] = $LookupItem.ID
-                                       
                                     }
                                 }
                                 "LookupMulti" {
