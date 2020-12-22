@@ -49,7 +49,7 @@ function Convert-SPClientField() {
     
     process {
         Write-Host $ClientContext
-        if ($ClientContext -eq $null) {
+        if ($null -eq $ClientContext) {
             throw "Cannot bind argument to parameter 'ClientContext' because it is null."
         }
         $Table = @{
