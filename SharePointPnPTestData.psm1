@@ -45,6 +45,12 @@ function Convert-Data() {
 
         $TargetRow = [pscustomobject]@{}
 
+        $Mapping |
+            Get-Member -MemberType NoteProperty |
+            ForEach-Object {
+                $Mapping[$PSItem.Name]
+            }
+
         $SourceRow.PSObject.Properties |
         ForEach-Object {
             $Property = $PSItem

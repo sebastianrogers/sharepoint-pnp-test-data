@@ -205,18 +205,22 @@ function Set-Data() {
                 $ListItem = $null
                
                 if ($KeyValue) {
-                    $ListItem = Get-PnPListItem `
+                    $ListItem = @(Get-PnPListItem `
                         -List:$ListName `
-                        -Query:"<View><Query><Where><Eq><FieldRef Name='$Key'/><Value Type='Text'>$KeyValue</Value></Eq></Where></Query></View>"
+                        -Query:"<View><Query><Where><Eq><FieldRef Name='$Key'/><Value Type='Text'>$KeyValue</Value></Eq></Where></Query></View>")
                 }
-               
-                if ($ListItem) {
-                    Write-Information "Updating the $KeyValue item to the $ListName list."
-                    Set-PnPListItem -List:$ListName -Identity:$ListItem -ContentType:$ContentType -Values:$Values | Out-Null
+
+                if ($ListItem.length -gt 0) {
+                    $ListItem | ForEach-Object {
+                        Write-Information "Updating the $KeyValue item in the $ListName list..."
+                        Set-PnPListItem -List:$ListName -Identity:$PSItem -ContentType:$ContentType -Values:$Values | Out-Null
+                        Write-Verbose "Updated the $KeyValue item in the $ListName list."
+                    }
                 }
                 else {
-                    Write-Verbose "Adding the $KeyValue item to the $ListName list."
+                    Write-Information "Adding the $KeyValue item in the $ListName list..."
                     $ListItem = Add-PnPListItem -List:$ListName -ContentType:$ContentType -Values:$Values
+                    Write-Verbose "Added the $KeyValue item in the $ListName list."
                 }
 
                 if ($IDName) {

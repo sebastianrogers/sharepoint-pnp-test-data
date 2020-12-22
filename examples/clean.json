@@ -1,5 +1,9 @@
 {
     "mapping": {
+        "Key": {
+            "type": "add",
+            "value": "Title"
+        },
         "ResponsibleEmail": {
             "type": "md5"
         },
