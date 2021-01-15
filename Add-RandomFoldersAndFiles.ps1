@@ -11,6 +11,12 @@ There will be a maximum of 10 folder depth per root folder of the library
 
 ./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExampleFiles -ListName:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40
 
+.EXAMPLE
+Imports a Maximum of 40 documents per folder. 
+There will be a maximum of 20 folder per folder depth
+There will be a maximum of 10 folder depth per root folder of the library
+There will be a maxmium of 5 versions per document
+./Add-RandomFoldersAndFiles.ps1 -ExampleFilePath:.\ExampleFiles -ListName:'Import Library' -MaxFolderDepth:10 -MaxFoldersInEachDepth:20 -MaxDocumentsPerFolder:40 -MaxVersionsPerDocument:5
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
@@ -33,8 +39,11 @@ param(
     #Maximum No. of Documents in each Folder.
     [Parameter(Mandatory)]
     [int]
-    $MaxDocumentsPerFolder
-
+    $MaxDocumentsPerFolder,
+    #Maximum No. of Versions for each file.
+    [Parameter(Mandatory = $false)]
+    [int]
+    $MaxVersionsPerDocument = 1
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,13 +59,14 @@ else {
 #Required otherwise you get lots of disconnects.
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$RandomFiles = get-childitem $ExampleFilePath
+$RandomFiles = Get-ChildItem $ExampleFilePath
 $conjunction = "for", "and", "nor", "but", "or", "yet", "so", "the", "my", "we", "our"
 #Dictionary list of words.
-$words = import-csv $PSScriptRoot\DataFiles\DictionaryOfWords.csv
+$words = Import-Csv $PSScriptRoot\DataFiles\DictionaryOfWords.csv
 
 $global:FolderCount = 0
 $global:ItemCount = 0
+$global:VersionCount = 0
 
 function Get-RandomFileFromSystem() {
     return (Get-Random $RandomFiles).FullName
@@ -81,6 +91,7 @@ function CreateFoldersAndFiles() {
         $FolderPath
     )
 
+    $webServerRelativeUrl = (Get-PnPWeb).ServerRelativeUrl
     $CurrentDepth--
     if ($CurrentDepth -gt 0) {
         if ($false) {
@@ -112,15 +123,24 @@ function CreateFoldersAndFiles() {
         
         $extension = $file.Substring($file.LastIndexOf('.'))
         $newName = $fileName + $extension
-        Add-PnPFile -Path $file -Folder $FolderPath -NewFileName $newName | Out-Null
+
+        for ($k = 0; $k -lt $MaxVersionsPerDocument; $k++) {
+                $item = Add-PnPFile -Path $file -Folder $FolderPath -NewFileName $newName -Values @{Title = "Version ($k)" } 
+                if ($item.MinorVersion -eq 511) {
+                    $item.Publish("Publishing to Major Version")
+                    Invoke-PnPQuery   
+                }
+                $global:VersionCount++
+        }
+
         $global:ItemCount++
         Write-Information -MessageData:"Created file called: $newName"
     }
-    
-}    
+}  
+
 
 $depth++;
-$list = Get-PnpList -Identity:$ListName
+$list = Get-PnPList -Identity:$ListName
 Write-Verbose $list.RootFolder.ServerRelativeUrl
 $rootFolder = $list.RootFolder.ServerRelativeUrl
 $siteRelativePath = $rootFolder.Substring($rootFolder.LastIndexOf('/') + 1)
@@ -129,5 +149,6 @@ CreateFoldersAndFiles -CurrentDepth $MaxFolderDepth -FolderPath $siteRelativePat
 Write-Information -MessageData:"Completed adding files to: $ListName"
 Write-Information -MessageData:"Number of New Folder: $global:FolderCount"
 Write-Information -MessageData:"Number of New Files: $global:ItemCount"
+Write-Information -MessageData:"Number of Versions created: $global:VersionCount"
 $total = $global:FolderCount + $global:ItemCount
 Write-Information -MessageData:"Total Number of Items: $total"
