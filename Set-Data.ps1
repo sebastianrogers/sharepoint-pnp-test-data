@@ -12,7 +12,13 @@ Install to the demo site.
 [CmdletBinding(SupportsShouldProcess)]
 param(
     # The path expression containing the data files import
-    [Parameter(Mandatory)][string]$Path
+    [Parameter(Mandatory)][string]$Path,
+
+    # How often a reconnect should occur
+    [Parameter(Mandatory)][int]$ReconnectEvery = 1000,
+
+    # If web login should be used
+    [Switch]$UseWebLogin
 )
 
 $ErrorActionPreference = 'stop'
@@ -86,9 +92,9 @@ function Set-Data() {
     $Fields = @{ }
 
     @($(Import-Csv -Path:$Path)).ForEach( {
-            if ($Count % 1000 -eq 0) {
+            if ($ReconnectEvery -gt 0 -and $Count % $ReconnectEvery -eq 0) {
                 Write-Verbose -Message:"Reconnecting to SharePoint"
-                Connect-PnPOnline -Url:$Url -UseWebLogin
+                Connect-PnPOnline -Url:$Url -UseWebLogin:$UseWebLogin
             }
 
             $Count++
