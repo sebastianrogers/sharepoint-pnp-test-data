@@ -45,11 +45,28 @@ function Convert-Data() {
 
         $TargetRow = [pscustomobject]@{}
 
-        $Mapping |
-            Get-Member -MemberType NoteProperty |
-            ForEach-Object {
-                $Mapping[$PSItem.Name]
+        $Mapping | Get-Member -MemberType NoteProperty | ForEach-Object {
+            $MappingName = $PSItem.Name
+            $MappingItem = $Mapping.$MappingName
+            $MappingType = $MappingItem.type
+            $MappingValue = $MappingItem.value
+            switch ($MappingType) {
+                "add" {
+                    $TargetRow | Add-Member `
+                        -MemberType:NoteProperty `
+                        -Name:$MappingName `
+                        -Value:$MappingValue `
+                        -Force
+                }
+                "copy" {
+                    $TargetRow | Add-Member `
+                        -MemberType:NoteProperty `
+                        -Name:$MappingName `
+                        -Value:$SourceRow.$MappingValue `
+                        -Force
+                }
             }
+        }
 
         $SourceRow.PSObject.Properties |
         ForEach-Object {
@@ -57,6 +74,7 @@ function Convert-Data() {
             $Name = $Property.Name
             $SourceValue = $Property.Value
             $ItemMapping = $Mapping.$Name
+
             switch ($ItemMapping.type) {
                 "lookup" {
                     $TargetRow | Add-member `
@@ -71,6 +89,12 @@ function Convert-Data() {
                         -Value:$(Get-StringHash -String:$SourceValue)
                 }
                 "remove" {
+                }
+                "replace" {
+                    $TargetRow | Add-member `
+                        -MemberType:NoteProperty `
+                        -Name:$Name `
+                        -Value:$($ItemMapping.value)
                 }
                 default {
                     $TargetRow | Add-member `
@@ -136,7 +160,7 @@ function Export-List() {
 
         if (-not $Item) {
             Write-Warning "Cannot find the item with a $ItemID list ID."
-            $ItemTotal = $ItemTotal+1
+            $ItemTotal = $ItemTotal + 1
             continue
         }
 
