@@ -17,25 +17,25 @@ This uses a json definition file that will be processed by the New-Data.ps1 scri
 
 ```json
 {
-    "title": "Human readable title for the definition.",
-    "description": "Description of what the definition will generate.",
-    "lists": [
+  "title": "Human readable title for the definition.",
+  "description": "Description of what the definition will generate.",
+  "lists": [
+    {
+      "rows": "1", // The number of rows to generate
+      "fields": [
         {
-            "rows": "1", // The number of rows to generate
-            "fields": [
-                {
-                    "title": "The InternalName of the field",
-                    "pattern": "The pattern to use to generate the field"
-                }
-            ]
+          "title": "The InternalName of the field",
+          "pattern": "The pattern to use to generate the field"
         }
-    ],
-    "lookups": {
-        "token": [
-            // The token name that the {lookup:} token will use
-            "value"
-        ]
+      ]
     }
+  ],
+  "lookups": {
+    "token": [
+      // The token name that the {lookup:} token will use
+      "value"
+    ]
+  }
 }
 ```
 
@@ -45,14 +45,14 @@ The field pattern is the data used to populate a field.
 
 It can comprise:
 
--   Tokens
--   Regular expressions
+- Tokens
+- Regular expressions
 
 The tokens are evaluated first in the following order.
 
--   {telephone}, generates a string in the format "09999 999999"
--   {lookup:name.field}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename.title}"
--   {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
+- {telephone}, generates a string in the format "09999 999999"
+- {lookup:name.field}, replaces the token with a random value from the matching lookup member, e.g. "{lookup:forename.title}"
+- {field:name}, replaces the token with the value of the field in the current item, e.g. "{field:forename}"
 
 ### Exporting SharePoint Site (Export-Site.ps1)
 
@@ -62,7 +62,7 @@ Each non hidden list will be exported as a csv file in the folder specified by t
 
 ```ps1
 Connect-PnPOnline https://<tenant>.sharepoint.com/sites/Demo
-.\Export-Site.ps1 -Path:.\temp -URL:ttps://<tenant>.sharepoint.com/sites/Demo
+.\Export-Site.ps1 -Path:.\temp -URL:https://<tenant>.sharepoint.com/sites/Demo
 ```
 
 The page size used to batch the exports can be modified by using the -PageSize parameter.
@@ -142,8 +142,8 @@ You will need the Microsoft [SharePointPnP.PowerShell Commands](https://github.c
 
 ### Installing
 
--   Navigate to the folder the repository was downloaded to.
--   Test connectivity using the [examples/documents-none.json](examples/documents-none.json) file supplied, this uses the default Documents library but does not insert any items.
+- Navigate to the folder the repository was downloaded to.
+- Test connectivity using the [examples/documents-none.json](examples/documents-none.json) file supplied, this uses the default Documents library but does not insert any items.
 
 ### Writing JSON files
 
@@ -151,17 +151,17 @@ The json files use an array as their root object so that multiple lists can be u
 
 ```json
 [
-    {
-        "title": "The title of the list to add test data to",
-        "description": "A description of why the test data is being added",
-        "rows": "The number of rows to add.",
-        "fields": [
-            {
-                "title": "The title of the field to have data added",
-                "pattern": "The pattern to use to generate the test data"
-            }
-        ]
-    }
+  {
+    "title": "The title of the list to add test data to",
+    "description": "A description of why the test data is being added",
+    "rows": "The number of rows to add.",
+    "fields": [
+      {
+        "title": "The title of the field to have data added",
+        "pattern": "The pattern to use to generate the test data"
+      }
+    ]
+  }
 ]
 ```
 
@@ -192,7 +192,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
--   **Sebastian Rogers** - _Initial work_ - [sebastianrogers](https://github.com/sebastianrogers)
+- **Sebastian Rogers** - _Initial work_ - [sebastianrogers](https://github.com/sebastianrogers)
 
 See also the list of [contributors](https://github.com/sebastianrogers/sharepoint-pnp-test-data/contributors) who participated in this project.
 
