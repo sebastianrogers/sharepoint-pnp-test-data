@@ -195,46 +195,57 @@ function Export-List() {
 
         Write-Output -InputObject:$Object
     }
-    # Get-PnPListItem `
-    #     -List:$Identity `
-    #     -PageSize:$PageSize `
-    #     -ScriptBlock {
-    #     Param($ItemCollection)
-    #     $ItemCollection.Context.ExecuteQuery()
-    # } |
-    # ForEach-Object {
-    #     $Item = $PSItem
-    #     $Item.Context.Load($Item.ContentType)
-    #     $Item.Context.Load($Item.FieldValuesAsText)
-    #     Invoke-PnPQuery
+}
 
-    #     $Object = New-Object PSObject
-    #     $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$Identity
+function Export-QueriedList() {
+    param(
+        # The title of the list to get the data from
+        [Parameter(Mandatory)][string]$Identity,
 
-    #     $Fields |
-    #     ForEach-Object {
-    #         $Key = $PSItem
-    #         $Value = $null        
+        # The fields in the list to get the data from
+        [Parameter(Mandatory)][AllowNull()][array]$Fields,
 
-    #         if ($null -ne $Item.FieldValues[$Key]) {
-    #             $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
-    #                 "DateTime" {
-    #                     $Item.FieldValues[$Key].ToString("o")
-    #                     break
-    #                 }
-    #                 "Boolean" {
-    #                     if ($Item.FieldValuesAsText[$Key] -eq "Yes") { $true } else { $false }
-    #                     break
-    #                 }
-    #                 default { $Item.FieldValuesAsText[$Key] }
-    #             }
-    #         }
+        # The CAML Query to use
+        [string]$Query
+    )
+
+    Get-PnPListItem `
+        -List:$Identity `
+        -Query:$Query |
+    ForEach-Object {
+        $Item = $PSItem
+
+        $Item.Context.Load($Item.ContentType)
+        $Item.Context.Load($Item.FieldValuesAsText)
+        Invoke-PnPQuery
+
+        $Object = New-Object PSObject
+        $Object | Add-Member -MemberType:NoteProperty -Name:"List" -Value:$Identity
+
+        $Fields |
+        ForEach-Object {
+            $Key = $PSItem
+            $Value = $null        
+
+            if ($null -ne $Item.FieldValues[$Key]) {
+                $Value = switch ($Item.FieldValues[$Key].GetType().Name) {
+                    "DateTime" {
+                        $Item.FieldValues[$Key].ToString("o")
+                        break
+                    }
+                    "Boolean" {
+                        if ($Item.FieldValuesAsText[$Key] -eq "Yes") { $true } else { $false }
+                        break
+                    }
+                    default { $Item.FieldValuesAsText[$Key] }
+                }
+            }
             
-    #         $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
-    #     }
+            $Object | Add-Member -MemberType:NoteProperty -Name:$Key -Value:$Value
+        }
 
-    #     Write-Output -InputObject:$Object
-    # }
+        Write-Output -InputObject:$Object
+    }
 }
 
 function Get-ListFieldInternalNameCollection() {
